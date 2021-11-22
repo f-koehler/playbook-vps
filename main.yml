@@ -1,0 +1,12 @@
+- hosts: vps
+  become: true
+  vars_files:
+    # - config.yml
+    - secrets.yml
+  pre_tasks:
+    - name: Update pacman cache.
+      community.general.pacman:
+        update_cache: true
+  tasks:
+    - name: Set up docker.
+      ansible.builtin.import_tasks: tasks/docker.yml

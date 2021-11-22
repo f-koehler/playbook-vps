@@ -1,0 +1,24 @@
+- name: Install docker.
+  ansible.builtin.import_role:
+    name: geerlingguy.docker
+  vars:
+    docker_package: docker
+    docker_install_compose: false
+
+- name: Install docker-compose and docker-py.
+  community.general.pacman:
+    name:
+      - docker-compose
+      - python-docker
+    state: present
+
+# TODO: remove this once the docker collection has been updated to use the new GO implementation of docker-compose.
+- name: Install legacy docker-compose.
+  block:
+    - name: Install pip.
+      community.general.pacman:
+        name: python-pip
+
+    - name: Install docker-compose python package.
+      ansible.builtin.pip:
+        name: docker-compose
