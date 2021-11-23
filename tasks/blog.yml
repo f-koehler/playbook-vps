@@ -1,0 +1,60 @@
+- name: Create folder for docker-compose files.
+  ansible.builtin.file:
+    path: "~/docker-compose/blog"
+    state: directory
+    recurse: true
+    mode: "0700"
+
+- name: Create blog volumes.
+  ansible.builtin.file:
+    path: /volumes/blog/{{ volume }}
+    state: directory
+    mode: "0700"
+    owner: "101"
+    group: "101"
+  loop:
+    - config
+    - content
+    - log
+  loop_control:
+    loop_var: volume
+
+- name: Create Diffie-Hellman parameters.
+  ansible.builtin.shell: >
+    openssl dhparam -out /volumes/blog/config/dhparams.pem 4096 && chown 101:101 /volumes/blog/config/dhparams.pem && chmod 700 /volumes/blog/config/dhparams.pem
+  args:
+    creates: /volumes/blog/config/dhparams.pem
+
+- name: Symlink cert files.
+  ansible.builtin.file:
+    src: "/etc/letsencrypt/live/{{ domain }}/{{ cert_file }}"
+    dest: "/volumes/blog/config/{{ cert_file }}"
+    state: link
+    mode: "0700"
+    owner: "101"
+    group: "101"
+  loop:
+    - cert.pem
+    - fullchain.pem
+    - privkey.pem
+  loop_control:
+    loop_var: cert_file
+
+- name: Generate nginx config.
+  ansible.builtin.template:
+    src: templates/nginx.conf
+    dest: /volumes/blog/config/nginx.conf
+    owner: "101"
+    group: "101"
+    mode: "0700"
+
+- name: Generate blog docker-compose file.
+  ansible.builtin.template:
+    src: templates/blog-docker-compose.yml.j2
+    dest: ~/docker-compose/blog/docker-compose.yml
+    mode: "0700"
+
+- name: Start blog containers.
+  community.docker.docker_compose:
+    project_src: "~/docker-compose/blog"
+    pull: true

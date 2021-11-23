@@ -1,0 +1,54 @@
+- name: Install certbot.
+  ansible.builtin.package:
+    name:
+      - certbot
+      - certbot-dns-cloudflare
+
+- name: Create certbot config dir.
+  ansible.builtin.file:
+    path: /etc/certbot
+    state: directory
+    mode: "0600"
+
+- name: Configure certbot cloudflare plugin.
+  ansible.builtin.template:
+    src: templates/cloudflare.ini
+    dest: /etc/certbot/cloudflare.ini
+    mode: 0600
+
+- name: Run certbot.
+  ansible.builtin.command: >
+    certbot
+    certonly
+    --expand
+    --keep
+    --non-interactive
+    --agree-tos
+    -m
+    {{ letsencrypt_email }}
+    --dns-cloudflare
+    --dns-cloudflare-credentials
+    /etc/certbot/cloudflare.ini
+    -d {{domain}}
+    {{subdomains|map('regex_replace', '^(.*)$', '-d \1\.'+domain)|join(' ')}}
+  args:
+    creates: /etc/letsencrypt/live/{{ domain }}/privkey.pem
+
+- name: Copy certbot systemd units.
+  ansible.builtin.copy:
+    src: "files/{{ unit }}"
+    dest: "/etc/systemd/system/{{ unit }}"
+    mode: "0600"
+  loop:
+    - certbot.service
+    - certbot.timer
+  loop_control:
+    loop_var: unit
+  notify:
+    - Restart certbot.
+
+- name: Enable cerbot.
+  ansible.builtin.systemd:
+    name: certbot.timer
+    state: started
+    enabled: true

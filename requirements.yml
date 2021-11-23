@@ -1,5 +1,7 @@
 roles:
   - name: geerlingguy.docker
+  - name: f_koehler.sshd
+  - name: f_koehler.haveged
 
 collections:
   - name: community.general
