@@ -31,6 +31,12 @@
     port: "443"
     proto: tcp
 
+- name: Allow headscale webpanel.
+  community.general.ufw:
+    rule: allow
+    port: "1443"
+    proto: tcp
+
 - name: Deny incoming traffic by default.
   community.general.ufw:
     policy: deny

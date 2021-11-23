@@ -11,19 +11,21 @@
     - name: Include handlers.
       ansible.builtin.import_tasks: handlers.yml
   tasks:
-    - name: Set up docker.
-      ansible.builtin.import_tasks: tasks/docker.yml
-    - name: Harden SSH server.
-      ansible.builtin.import_role:
-        name: f_koehler.sshd
-    - name: Setup haveged.
-      ansible.builtin.import_role:
-        name: f_koehler.haveged
+    # - name: Set up docker.
+    #   ansible.builtin.import_tasks: tasks/docker.yml
+    # - name: Harden SSH server.
+    #   ansible.builtin.import_role:
+    #     name: f_koehler.sshd
+    # - name: Setup haveged.
+    #   ansible.builtin.import_role:
+    #     name: f_koehler.haveged
     # - name: Setup DNS records.
     #   ansible.builtin.import_tasks: "tasks/dns.yml"
-    - name: Obtain SSL certificate.
-      ansible.builtin.import_tasks: "tasks/cert.yml"
+    # - name: Obtain SSL certificate.
+    #   ansible.builtin.import_tasks: "tasks/cert.yml"
     - name: Enable firewall.
       ansible.builtin.import_tasks: tasks/firewall.yml
     - name: Setup blog containers.
       ansible.builtin.import_tasks: tasks/blog.yml
+    - name: Setup headscale containers.
+      ansible.builtin.import_tasks: tasks/headscale.yml

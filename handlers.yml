@@ -3,3 +3,13 @@
     name: certbot.timer
     state: restarted
     daemon_reload: true
+
+- name: Restart blog.
+  community.docker.docker_compose:
+    project_src: "~/docker-compose/blog"
+    restarted: true
+
+- name: Restart headscale.
+  community.docker.docker_compose:
+    project_src: "~/docker-compose/headscale"
+    restarted: true

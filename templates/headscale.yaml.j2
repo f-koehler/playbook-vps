@@ -1,0 +1,23 @@
+server_url: https://{{ domain }}:1443
+listen_addr: 0.0.0.0:8080
+private_key_path: private.key
+derp:
+  urls:
+    - https://controlplane.tailscale.com/derpmap/default
+  auto_update_enabled: true
+  update_frequency: 24h
+disable_check_updates: false
+ephemeral_node_inactivity_timeout: 30m
+db_type: postgres
+db_host: db
+db_port: 5432
+db_name: headscale
+db_user: headscale
+db_pass: {{ headscale_db_password }}
+dns_config:
+  nameservers:
+    - 1.1.1.1
+  domains: []
+  magic_dns: true
+  base_domain: vpn
+unix_socket: /var/run/headscale.sock

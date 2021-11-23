@@ -24,6 +24,8 @@
     openssl dhparam -out /volumes/blog/config/dhparams.pem 4096 && chown 101:101 /volumes/blog/config/dhparams.pem && chmod 700 /volumes/blog/config/dhparams.pem
   args:
     creates: /volumes/blog/config/dhparams.pem
+  notify:
+    - Restart blog.
 
 - name: Symlink cert files.
   ansible.builtin.file:
@@ -35,10 +37,13 @@
     group: "101"
   loop:
     - cert.pem
+    - chain.pem
     - fullchain.pem
     - privkey.pem
   loop_control:
     loop_var: cert_file
+  notify:
+    - Restart blog.
 
 - name: Generate nginx config.
   ansible.builtin.template:
@@ -47,6 +52,8 @@
     owner: "101"
     group: "101"
     mode: "0700"
+  notify:
+    - Restart blog.
 
 - name: Generate blog docker-compose file.
   ansible.builtin.template:
