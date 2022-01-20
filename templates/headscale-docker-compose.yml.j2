@@ -1,32 +1,12 @@
 version: "3.9"
 services:
-  db:
-    image: "postgres:14"
-    restart: "unless-stopped"
-    volumes:
-      - "/etc/localtime:/etc/localtime:ro"
-      - "/volumes/headscale/db:/var/lib/postgresql/data:rw"
-    environment:
-      - POSTGRES_PASSWORD={{ headscale_db_password }}
-      - POSTGRES_USER=headscale
-      - POSTGRES_DB=headscale
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "headscale"]
-      interval: 10s
-      timeout: 10s
-      retries: 5
   app:
-    image: "headscale/headscale:latest"
+    image: "headscale/headscale:0.12-alpine"
     restart: "unless-stopped"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
-      - "/volumes/headscale/config:/etc/headscale:rw"
-      - "/volumes/headscale/private.key:/etc/headscale/private.key:ro"
-      - "/volumes/headscale/config.yaml:/etc/headscale/config.yaml:ro"
+      - "/volumes/headscale/app:/etc/headscale:rw"
     command: headscale serve
-    depends_on:
-      db:
-        condition: service_healthy
   proxy:
     image: "nginx:latest"
     restart: "unless-stopped"

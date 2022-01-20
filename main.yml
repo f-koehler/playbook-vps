@@ -23,9 +23,9 @@
     #   ansible.builtin.import_tasks: "tasks/dns.yml"
     # - name: Obtain SSL certificate.
     #   ansible.builtin.import_tasks: "tasks/cert.yml"
-    - name: Enable firewall.
-      ansible.builtin.import_tasks: tasks/firewall.yml
-    - name: Setup blog containers.
-      ansible.builtin.import_tasks: tasks/blog.yml
+    # - name: Enable firewall.
+    #   ansible.builtin.import_tasks: tasks/firewall.yml
+    # - name: Setup blog containers.
+    #   ansible.builtin.import_tasks: tasks/blog.yml
     - name: Setup headscale containers.
       ansible.builtin.import_tasks: tasks/headscale.yml

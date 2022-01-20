@@ -15,27 +15,37 @@
     path: "/volumes/headscale/{{ volume }}"
     state: directory
     mode: "0700"
+    recurse: yes
   loop:
-    - config
-    - db
+    - app
     - proxy
   loop_control:
     loop_var: volume
 
-- name: Generate private key.
-  ansible.builtin.shell: wg genkey > /volumes/headscale/private.key
-  args:
-    creates: /volumes/headscale/private.key
-  notify:
-    - Restart headscale.
-
 - name: Generate headscale config.
   ansible.builtin.template:
     src: templates/headscale.yaml.j2
-    dest: /volumes/headscale/config.yaml
+    dest: /volumes/headscale/app/config.yaml
     mode: "0700"
   notify:
     - Restart headscale.
+
+- name: Ensure that headscale database exists.
+  block:
+    - name: Check if headscale database exists.
+      ansible.builtin.stat:
+        path: /volumes/headscale/app/db.sqlite
+      register: headscale_db_stat
+    - name: Create empty headscale database.
+      ansible.builtin.file:
+        path: /volumes/headscale/app/db.sqlite
+        state: touch
+        owner: root
+        group: root
+        mode: "0600"
+      when: not headscale_db_stat.stat.exists
+      notify:
+        - Restart headscale.
 
 - name: Create Diffie-Hellman parameters.
   ansible.builtin.shell: >
