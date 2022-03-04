@@ -1,20 +1,3 @@
-- name: Install certbot.
-  ansible.builtin.package:
-    name:
-      - certbot
-      - certbot-dns-cloudflare
-
-- name: Create certbot config dir.
-  ansible.builtin.file:
-    path: /etc/certbot
-    state: directory
-    mode: "0600"
-
-- name: Configure certbot cloudflare plugin.
-  ansible.builtin.template:
-    src: templates/cloudflare.ini
-    dest: /etc/certbot/cloudflare.ini
-    mode: 0600
 
 - name: Run certbot.
   ansible.builtin.command: >

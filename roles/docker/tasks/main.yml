@@ -1,0 +1,29 @@
+- name: Install docker.
+  ansible.builtin.package:
+    name: "{{ package }}"
+    state: present
+  loop:
+    - docker
+    - docker-compose
+    - python-docker
+  loop_control:
+    loop_var: package
+
+- name: Start docker.
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+# FIXME: remove this once the docker collection has been updated to use the new golang implementation of docker-compose.
+- name: Install legacy docker-compose.
+  block:
+    - name: Install pip.
+      community.general.pacman:
+        name:
+          - python-pip
+
+    - name: Install docker-compose python package.
+      ansible.builtin.pip:
+        name: docker-compose
+        extra_args: --user
