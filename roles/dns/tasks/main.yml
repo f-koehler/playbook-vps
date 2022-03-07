@@ -1,16 +1,15 @@
-# - name: Setup A records.
-#   community.general.cloudflare_dns:
-#     domain: "{{ domain }}"
-#     record: "{{ subdomain }}"
-#     type: A
-#     state: present
-#     value: "207.180.226.248"
-#     account_api_key: "{{ cloudflare_api_key }}"
-#     account_email: "{{ cloudflare_email }}"
-#   loop_control:
-#     loop_var: subdomain
-#   loop:
-#     - vpn
+- name: Setup A records.
+  community.general.cloudflare_dns:
+    domain: "{{ domain }}"
+    record: "{{ subdomain }}"
+    type: A
+    state: present
+    value: "194.61.28.200"
+    account_api_key: "{{ cloudflare_api_key }}"
+    account_email: "{{ cloudflare_email }}"
+  loop_control:
+    loop_var: subdomain
+  loop: "{{ subdomains[:-1] }}"
 
 - name: Setup MX records.
   community.general.cloudflare_dns:

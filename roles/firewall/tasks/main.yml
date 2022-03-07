@@ -19,6 +19,12 @@
     port: "{{ ssh_port }}"
     proto: tcp
 
+- name: Allow HTTPS.
+  community.general.ufw:
+    rule: limit
+    port: 443
+    proto: tcp
+
 - name: Deny incoming traffic by default.
   community.general.ufw:
     policy: deny

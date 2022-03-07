@@ -1,0 +1,58 @@
+- name: Create folder for docker-compose files.
+  ansible.builtin.file:
+    path: "~/docker-compose/headscale"
+    state: directory
+    recurse: true
+    mode: "0700"
+
+- name: Symlink cert files.
+  ansible.builtin.file:
+    src: "/etc/letsencrypt/live/{{ subdomains[0] }}.{{ domain }}/{{ cert_file }}"
+    dest: "~/docker-compose/headscale/{{ cert_file }}"
+    state: link
+    mode: "0700"
+    owner: "101"
+    group: "101"
+  loop:
+    - cert.pem
+    - chain.pem
+    - fullchain.pem
+    - privkey.pem
+    - dhparams.pem
+  loop_control:
+    loop_var: cert_file
+  notify:
+    - Restart headscale.
+
+- name: Generate config.
+  ansible.builtin.template:
+    src: headscale.yaml
+    dest: ~/docker-compose/headscale/headscale.yaml
+    mode: "0700"
+  notify:
+    - Restart headscale.
+
+- name: Generate nginx config.
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: ~/docker-compose/headscale/nginx.conf
+    owner: "101"
+    group: "101"
+    mode: "0700"
+  notify:
+    - Restart headscale.
+
+- name: Generate headscale docker-compose file.
+  ansible.builtin.template:
+    src: docker-compose.yml
+    dest: ~/docker-compose/headscale/docker-compose.yml
+    mode: "0700"
+  notify:
+    - Restart headscale.
+
+- name: Start headscale containers.
+  community.docker.docker_compose:
+    project_src: "~/docker-compose/headscale"
+    pull: true
+  notify:
+    - Restart headscale.
