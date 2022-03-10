@@ -40,6 +40,7 @@
     appends: true
     connected:
       - nextcloud_app
+      - dashboard_app
 
 - name: Generate frontend docker-compose file.
   ansible.builtin.template:

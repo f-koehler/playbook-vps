@@ -50,7 +50,9 @@ services:
       - "53:53/tcp"
       - "53:53/udp"
     extra_hosts:
+      - "svc.fkoehler.xyz:{{ vpn_ipv4.vps }}"
       - "nextcloud.svc.fkoehler.xyz:{{ vpn_ipv4.vps }}"
+      - "dashboard.svc.fkoehler.xyz:{{ vpn_ipv4.vps }}"
 volumes:
   db:
   app:
