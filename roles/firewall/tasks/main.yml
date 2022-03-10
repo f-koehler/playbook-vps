@@ -13,15 +13,15 @@
   community.general.ufw:
     state: enabled
 
-- name: Allow SSH.
+- name: Limit public SSH.
   community.general.ufw:
     rule: limit
     port: "{{ ssh_port }}"
     proto: tcp
 
-- name: Allow HTTPS.
+- name: Limit public HTTPS.
   community.general.ufw:
-    rule: limit
+    rule: allow
     port: 443
     proto: tcp
 

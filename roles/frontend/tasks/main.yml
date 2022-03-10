@@ -1,0 +1,53 @@
+- name: Create folder for docker-compose files.
+  ansible.builtin.file:
+    path: "~/docker-compose/frontend"
+    state: directory
+    recurse: true
+    mode: "0700"
+
+- name: Symlink cert files.
+  ansible.builtin.file:
+    src: "/etc/letsencrypt/live/{{ subdomains[0] }}.{{ domain }}/{{ cert_file }}"
+    dest: "~/docker-compose/frontend/{{ cert_file }}"
+    state: link
+    mode: "0700"
+    owner: "101"
+    group: "101"
+  loop:
+    - cert.pem
+    - chain.pem
+    - fullchain.pem
+    - privkey.pem
+    - dhparams.pem
+  loop_control:
+    loop_var: cert_file
+  notify:
+    - Restart frontend.
+
+- name: Generate nginx config.
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: ~/docker-compose/frontend/nginx.conf
+    owner: "101"
+    group: "101"
+    mode: "0700"
+  notify:
+    - Restart frontend.
+
+- name: Create a network for the reverse proxy.
+  community.docker.docker_network:
+    name: frontend
+    appends: true
+    connected:
+      - nextcloud_app
+
+- name: Generate frontend docker-compose file.
+  ansible.builtin.template:
+    src: docker-compose.yml
+    dest: ~/docker-compose/frontend/docker-compose.yml
+    mode: "0700"
+
+- name: Start frontend containers.
+  community.docker.docker_compose:
+    project_src: "~/docker-compose/frontend"
+    pull: true

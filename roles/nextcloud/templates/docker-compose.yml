@@ -1,0 +1,54 @@
+version: "3.9"
+services:
+  db:
+    container_name: nextcloud_db
+    image: "postgres:14"
+    restart: "unless-stopped"
+    environment:
+      POSTGRES_PASSWORD: "{{ nextcloud_db_password }}"
+      POSTGRES_USER: nextcloud
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: nextcloud
+    volumes:
+      - "db:/var/lib/postgresql/data:rw"
+  cache:
+    container_name: nextcloud_cache
+    image: "redis:6-alpine"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+  app:
+    container_name: nextcloud_app
+    image: "nextcloud:23-apache"
+    restart: "unless-stopped"
+    depends_on:
+      - db
+      - cache
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "app:/var/www/html"
+    environment:
+      POSTGRES_PASSWORD: "{{ nextcloud_db_password }}"
+      POSTGRES_USER: nextcloud
+      POSTGRES_DB: nextcloud
+      POSTGRES_HOST: nextcloud_db
+      NEXTCLOUD_ADMIN_USER: "{{ nextcloud_admin_user }}"
+      NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
+      NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.svc.fkoehler.xyz nextcloud_app"
+      # OVERWRITEWEBROOT: "/nextcloud"
+      OVERWRITEHOST: "nextcloud.svc.fkoehler.xyz"
+      OVERWRITEPROTOCOL: "https"
+      REDIS_HOST: nextcloud_cache
+  cron:
+    container_name: nextcloud_cron
+    image: "nextcloud:23-apache"
+    restart: "unless-stopped"
+    depends_on:
+      - db
+      - cache
+    entrypoint: /cron.sh
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "app:/var/www/html"
+volumes:
+  db:
+  app:

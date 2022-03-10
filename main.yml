@@ -2,10 +2,13 @@
   become: true
   vars_files:
     - secrets.yml
-  # pre_tasks:
-  #   - name: Update pacman cache.
-  #     community.general.pacman:
-  #       update_cache: true
+  pre_tasks:
+    # - name: Set hostname.
+    #   ansible.builtin.hostname:
+    #     name: vps
+    #   - name: Update pacman cache.
+    #     community.general.pacman:
+    #       update_cache: true
   tasks:
     - name: Import roles.
       ansible.builtin.include_role:
@@ -13,13 +16,15 @@
       loop_control:
         loop_var: role
       loop:
-        # - ssh
+        - ssh
         - firewall
-        # - haveged
-        # - docker
-        # - cert
+        - haveged
+        - docker
+        - cert
         - dns
         - headscale
+        - nextcloud
+        - frontend
 # - hosts: vps
 #   become: true
 #   vars_files:

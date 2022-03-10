@@ -1,0 +1,4 @@
+- name: Restart frontend.
+  community.docker.docker_compose:
+    project_src: "~/docker-compose/frontend"
+    restarted: true

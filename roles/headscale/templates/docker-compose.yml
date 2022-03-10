@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   db:
+    container_name: headscale_db
     image: "postgres:14"
     restart: "unless-stopped"
     environment:
@@ -11,6 +12,7 @@ services:
     volumes:
       - "db:/var/lib/postgresql/data:rw"
   app:
+    container_name: headscale_app
     image: "headscale/headscale:0.14-alpine"
     restart: "unless-stopped"
     volumes:
@@ -21,6 +23,7 @@ services:
     depends_on:
       - db
   proxy:
+    container_name: headscale_proxy
     image: "nginx:latest"
     restart: "unless-stopped"
     volumes:
@@ -32,9 +35,22 @@ services:
       - "./chain.pem:/etc/nginx/chain.pem:ro"
       - "./cert.pem:/etc/nginx/cert.pem:ro"
     ports:
-      - 443:443
+      - "{{ ansible_default_ipv4.address }}:80:80"
+      - "{{ ansible_default_ipv4.address }}:443:443"
     depends_on:
       - app
+  dns:
+    container_name: headscale_dns
+    build: ./dns
+    restart: "unless-stopped"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "./dns/dnsmasq.conf:/etc/dnsmasq.conf:ro"
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    extra_hosts:
+      - "nextcloud.svc.fkoehler.xyz:{{ vpn_ipv4.vps }}"
 volumes:
   db:
   app:

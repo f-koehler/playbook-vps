@@ -1,0 +1,21 @@
+- name: Create folder for docker-compose files.
+  ansible.builtin.file:
+    path: "~/docker-compose/nextcloud"
+    state: directory
+    recurse: true
+    mode: "0700"
+
+- name: Generate nextcloud docker-compose file.
+  ansible.builtin.template:
+    src: docker-compose.yml
+    dest: ~/docker-compose/nextcloud/docker-compose.yml
+    mode: "0700"
+  notify:
+    - Restart frontend.
+
+- name: Start nextcloud containers.
+  community.docker.docker_compose:
+    project_src: "~/docker-compose/nextcloud"
+    pull: true
+  notify:
+    - Restart frontend.

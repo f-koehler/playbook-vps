@@ -32,7 +32,7 @@
     --dns-cloudflare
     --dns-cloudflare-credentials
     /etc/certbot/cloudflare.ini
-    -d {{ subdomains|map('regex_replace', '^(.*)$', '-d \1\.'+domain)|join(' ') }}
+    -d {{ subdomains|join('.'+domain+',') }}.{{ domain }}
   args:
     creates: "/etc/letsencrypt/live/{{ subdomains[0] }}.{{ domain }}/privkey.pem"
 
@@ -56,9 +56,26 @@
     enabled: true
 
 - name: Create Diffie-Hellman parameters.
-  ansible.builtin.shell: >
-    "openssl dhparam -out /etc/letsencrypt/live/{{ subdomains[0] }}.{{ domain }}/dhparams.pem 4096"
+  ansible.builtin.command: >
+    openssl dhparam -out /etc/letsencrypt/live/{{ subdomains[0] }}.{{ domain }}/dhparams.pem 4096
   args:
     creates: "/etc/letsencrypt/live/{{ subdomains[0] }}.{{ domain }}/dhparams.pem"
   notify:
     - Restart headscale.
+    - Restart frontend.
+
+- name: Create bash alias for headscale.
+  ansible.builtin.lineinfile:
+    path: ~/.bashrc
+    line: 'alias headscale="docker exec -it headscale_app headscale"'
+
+- name: Install tailscale on server.
+  ansible.builtin.package:
+    name: tailscale
+    state: present
+
+- name: Start tailscale on server.
+  ansible.builtin.service:
+    name: tailscaled
+    state: started
+    enabled: true
