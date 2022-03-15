@@ -8,13 +8,14 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "./dhparams.pem:/etc/nginx/dhparams.pem:ro"
       - "./nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "./ssl.conf:/etc/nginx/ssl.conf:ro"
       - "./privkey.pem:/etc/nginx/privkey.pem:ro"
       - "./fullchain.pem:/etc/nginx/fullchain.pem:ro"
       - "./chain.pem:/etc/nginx/chain.pem:ro"
       - "./cert.pem:/etc/nginx/cert.pem:ro"
     ports:
-      - "{{ vpn_ipv4.vps }}:80:80"
-      - "{{ vpn_ipv4.vps }}:443:443"
+      - "{{ vpn.vps.ipv4 }}:80:80"
+      - "{{ vpn.vps.ipv4 }}:443:443"
     networks:
       - frontend
 networks:
