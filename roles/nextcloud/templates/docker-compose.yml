@@ -50,6 +50,9 @@ services:
       OVERWRITEHOST: "nextcloud.svc.fkoehler.xyz"
       OVERWRITEPROTOCOL: "https"
       REDIS_HOST: nextcloud_cache
+    networks:
+      - frontend
+      - default
   cron:
     container_name: nextcloud_cron
     image: "nextcloud:23-apache"
@@ -64,3 +67,7 @@ services:
 volumes:
   db:
   app:
+networks:
+  default:
+  frontend:
+    external: true

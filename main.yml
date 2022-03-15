@@ -3,12 +3,12 @@
   vars_files:
     - secrets.yml
   pre_tasks:
-    # - name: Set hostname.
-    #   ansible.builtin.hostname:
-    #     name: vps
-    #   - name: Update pacman cache.
-    #     community.general.pacman:
-    #       update_cache: true
+    - name: Set hostname.
+      ansible.builtin.hostname:
+        name: vps
+    - name: Update pacman cache.
+      community.general.pacman:
+        update_cache: true
   tasks:
     - name: Import roles.
       ansible.builtin.include_role:
@@ -23,37 +23,8 @@
         - cert
         - dns
         - headscale
+        - frontend
         - nextcloud
         - dashboard
-        - frontend
-# - hosts: vps
-#   become: true
-#   vars_files:
-#     - config.yml
-#     - secrets.yml
-#   pre_tasks:
-#     - name: Update pacman cache.
-#       community.general.pacman:
-#         update_cache: true
-#   handlers:
-#     - name: Include handlers.
-#       ansible.builtin.import_tasks: handlers.yml
-#   tasks:
-#     # - name: Set up docker.
-#     #   ansible.builtin.import_tasks: tasks/docker.yml
-#     # - name: Harden SSH server.
-#     #   ansible.builtin.import_role:
-#     #     name: f_koehler.sshd
-#     # - name: Setup haveged.
-#     #   ansible.builtin.import_role:
-#     #     name: f_koehler.haveged
-#     # - name: Setup DNS records.
-#     #   ansible.builtin.import_tasks: "tasks/dns.yml"
-#     # - name: Obtain SSL certificate.
-#     #   ansible.builtin.import_tasks: "tasks/cert.yml"
-#     # - name: Enable firewall.
-#     #   ansible.builtin.import_tasks: tasks/firewall.yml
-#     # - name: Setup blog containers.
-#     #   ansible.builtin.import_tasks: tasks/blog.yml
-#     - name: Setup headscale containers.
-#       ansible.builtin.import_tasks: tasks/headscale.yml
+        - healthchecks
+        - uptime

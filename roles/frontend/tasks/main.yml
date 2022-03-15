@@ -49,11 +49,6 @@
   community.docker.docker_network:
     name: frontend
     appends: true
-    connected:
-      - nextcloud_app
-      - dashboard_app
-      - healthchecks_app
-      - uptime_app
 
 - name: Generate frontend docker-compose file.
   ansible.builtin.template:

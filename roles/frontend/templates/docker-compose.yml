@@ -14,11 +14,14 @@ services:
       - "./fullchain.pem:/etc/nginx/fullchain.pem:ro"
       - "./chain.pem:/etc/nginx/chain.pem:ro"
       - "./cert.pem:/etc/nginx/cert.pem:ro"
+      - "./sites:/etc/nginx/sites"
     ports:
       - "{{ vpn.vps.ipv4 }}:80:80"
       - "{{ vpn.vps.ipv4 }}:443:443"
     networks:
+      - default
       - frontend
 networks:
+  default:
   frontend:
     external: true

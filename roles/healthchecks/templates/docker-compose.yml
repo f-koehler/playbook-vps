@@ -50,6 +50,13 @@ services:
     volumes:
       - "app:/config"
       - "./local_settings.py:/config/local_settings.py"
+    networks:
+      - frontend
+      - default
 volumes:
   db:
   app:
+networks:
+  default:
+  frontend:
+    external: true

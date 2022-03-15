@@ -27,3 +27,11 @@
     project_src: "~/docker-compose/healthchecks"
     pull: true
     build: true
+
+- name: Generate nginx config.
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: ~/docker-compose/frontend/sites/healthchecks.conf
+    mode: "0700"
+  notify:
+    - Restart frontend.

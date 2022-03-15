@@ -19,3 +19,11 @@
     pull: true
   notify:
     - Restart frontend.
+
+- name: Generate nginx config.
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: ~/docker-compose/frontend/sites/uptime.conf
+    mode: "0700"
+  notify:
+    - Restart frontend.

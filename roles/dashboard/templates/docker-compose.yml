@@ -4,3 +4,10 @@ services:
     container_name: dashboard_app
     image: lissy93/dashy
     restart: "unless-stopped"
+    networks:
+      - default
+      - frontend
+networks:
+  default:
+  frontend:
+    external: true
