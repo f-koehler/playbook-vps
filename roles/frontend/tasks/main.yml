@@ -1,9 +1,14 @@
 - name: Create folder for docker-compose files.
   ansible.builtin.file:
-    path: "~/docker-compose/frontend"
+    path: "~/docker-compose/{{ folder }}"
     state: directory
     recurse: true
     mode: "0700"
+  loop_control:
+    loop_var: folder
+  loop:
+    - frontend
+    - frontend/sites
 
 - name: Symlink cert files.
   ansible.builtin.file:
@@ -36,6 +41,7 @@
   loop:
     - nginx.conf
     - ssl.conf
+    - proxy.conf
   notify:
     - Restart frontend.
 
