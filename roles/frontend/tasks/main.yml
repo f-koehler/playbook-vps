@@ -26,11 +26,16 @@
 
 - name: Generate nginx config.
   ansible.builtin.template:
-    src: nginx.conf
-    dest: ~/docker-compose/frontend/nginx.conf
+    src: "{{ file }}"
+    dest: "~/docker-compose/frontend/{{ file }}"
     owner: "101"
     group: "101"
     mode: "0700"
+  loop_control:
+    loop_var: file
+  loop:
+    - nginx.conf
+    - ssl.conf
   notify:
     - Restart frontend.
 
