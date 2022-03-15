@@ -59,6 +59,7 @@ services:
       - "svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
       - "nextcloud.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
       - "dashboard.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
+      - "healthchecks.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
 volumes:
   db:
   app:

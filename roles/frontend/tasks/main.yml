@@ -46,6 +46,7 @@
     connected:
       - nextcloud_app
       - dashboard_app
+      - healthchecks_app
 
 - name: Generate frontend docker-compose file.
   ansible.builtin.template:
