@@ -5,7 +5,7 @@ services:
     image: "postgres:14"
     restart: "unless-stopped"
     environment:
-      POSTGRES_PASSWORD: "{{ nextcloud_db_password }}"
+      POSTGRES_PASSWORD: "{{ nextcloud.db.password }}"
       POSTGRES_USER: nextcloud
       PGDATA: /var/lib/postgresql/data
       POSTGRES_DB: nextcloud
@@ -27,12 +27,12 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "app:/var/www/html"
     environment:
-      POSTGRES_PASSWORD: "{{ nextcloud_db_password }}"
+      POSTGRES_PASSWORD: "{{ nextcloud.db.password }}"
       POSTGRES_USER: nextcloud
       POSTGRES_DB: nextcloud
       POSTGRES_HOST: nextcloud_db
-      NEXTCLOUD_ADMIN_USER: "{{ nextcloud_admin_user }}"
-      NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
+      nextcloud.admin.user: "{{ nextcloud.admin.user }}"
+      nextcloud.admin.password: "{{ nextcloud.admin.password }}"
       NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.svc.fkoehler.xyz nextcloud_app"
       # OVERWRITEWEBROOT: "/nextcloud"
       OVERWRITEHOST: "nextcloud.svc.fkoehler.xyz"
