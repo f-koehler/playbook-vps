@@ -9,6 +9,12 @@ services:
       POSTGRES_USER: headscale
       PGDATA: /var/lib/postgresql/data
       POSTGRES_DB: headscale
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U headscale"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     volumes:
       - "db:/var/lib/postgresql/data:rw"
   app:
