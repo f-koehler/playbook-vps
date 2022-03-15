@@ -50,13 +50,13 @@
     name: frontend
     appends: true
 
-- name: Generate frontend docker-compose file.
+- name: Generate docker-compose file.
   ansible.builtin.template:
     src: docker-compose.yml
     dest: ~/docker-compose/frontend/docker-compose.yml
     mode: "0700"
 
-- name: Start frontend containers.
+- name: Start containers.
   community.docker.docker_compose:
     project_src: "~/docker-compose/frontend"
     pull: true
