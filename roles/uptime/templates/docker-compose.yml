@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  app:
+    container_name: "uptime_app"
+    image: "louislam/uptime-kuma:latest"
+    restart: "unless-stopped"
+    volumes:
+      - "app:/app/data"
+volumes:
+  app:

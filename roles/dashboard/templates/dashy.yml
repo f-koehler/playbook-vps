@@ -1,0 +1,48 @@
+appConfig:
+  theme: colorful
+  layout: auto
+  iconSize: medium
+  language: en
+pageInfo:
+  title: Dashy
+  description: Welcome to your new dashboard!
+  navLinks:
+    - title: GitHub
+      path: https://github.com/Lissy93/dashy
+    - title: Documentation
+      path: https://dashy.to/docs
+  footerText: ""
+sections:
+  - name: Productivity
+    icon: fas fa-gears
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Nextcloud
+        icon: hl-nextcloud
+        url: https://nextcloud.svc.fkoehler.xyz
+        target: newtab
+        id: 0_1302_nextcloud
+      - title: Synology NAS
+        icon: hl-synology
+        url: http://nas.vpn.fkoehler.xyz
+        target: newtab
+        id: 1_1302_synologynas
+  - name: Monitoring
+    icon: fas fa-chart-area
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Healthchecks
+        icon: hl-healthchecks
+        url: https://healthchecks.svc.fkoehler.xyz
+        target: newtab
+        id: 0_1062_healthchecks
