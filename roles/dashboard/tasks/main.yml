@@ -5,7 +5,7 @@
     recurse: true
     mode: "0700"
 
-- name: Generate dashboard docker-compose file.
+- name: Generate docker-compose file.
   ansible.builtin.template:
     src: docker-compose.yml
     dest: ~/docker-compose/dashboard/docker-compose.yml
@@ -13,7 +13,15 @@
   notify:
     - Restart frontend.
 
-- name: Start dashboard containers.
+- name: Generate config file.
+  ansible.builtin.template:
+    src: conf.yml
+    dest: ~/docker-compose/dashboard/conf.yml
+    mode: "0700"
+  notify:
+    - Restart dashboard.
+
+- name: Start containers.
   community.docker.docker_compose:
     project_src: "~/docker-compose/dashboard"
     pull: true

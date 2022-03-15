@@ -4,6 +4,9 @@ services:
     container_name: dashboard_app
     image: lissy93/dashy
     restart: "unless-stopped"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "./conf.yml:/app/public/conf.yml"
     networks:
       - default
       - frontend
