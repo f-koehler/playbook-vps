@@ -9,7 +9,7 @@
   ansible.builtin.template:
     src: local_settings.py
     dest: ~/docker-compose/healthchecks/local_settings.py
-    mode: "0700"
+    mode: "0600"
   notify:
     - Restart healthchecks.
     - Restart frontend.
@@ -18,7 +18,7 @@
   ansible.builtin.template:
     src: docker-compose.yml
     dest: ~/docker-compose/healthchecks/docker-compose.yml
-    mode: "0700"
+    mode: "0600"
   notify:
     - Restart frontend.
 
@@ -32,6 +32,6 @@
   ansible.builtin.template:
     src: nginx.conf
     dest: ~/docker-compose/frontend/sites/healthchecks.conf
-    mode: "0700"
+    mode: "0600"
   notify:
     - Restart frontend.

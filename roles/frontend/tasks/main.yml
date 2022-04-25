@@ -15,7 +15,7 @@
     src: "/etc/letsencrypt/live/{{ subdomains[0] }}.{{ domain }}/{{ cert_file }}"
     dest: "~/docker-compose/frontend/{{ cert_file }}"
     state: link
-    mode: "0700"
+    mode: "0600"
     owner: "101"
     group: "101"
   loop:
@@ -35,7 +35,7 @@
     dest: "~/docker-compose/frontend/{{ file }}"
     owner: "101"
     group: "101"
-    mode: "0700"
+    mode: "0600"
   loop_control:
     loop_var: file
   loop:
@@ -54,7 +54,7 @@
   ansible.builtin.template:
     src: docker-compose.yml
     dest: ~/docker-compose/frontend/docker-compose.yml
-    mode: "0700"
+    mode: "0600"
 
 - name: Start containers.
   community.docker.docker_compose:

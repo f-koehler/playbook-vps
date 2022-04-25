@@ -9,7 +9,7 @@
   ansible.builtin.template:
     src: docker-compose.yml
     dest: ~/docker-compose/uptime/docker-compose.yml
-    mode: "0700"
+    mode: "0600"
   notify:
     - Restart frontend.
 
@@ -24,6 +24,6 @@
   ansible.builtin.template:
     src: nginx.conf
     dest: ~/docker-compose/frontend/sites/uptime.conf
-    mode: "0700"
+    mode: "0600"
   notify:
     - Restart frontend.

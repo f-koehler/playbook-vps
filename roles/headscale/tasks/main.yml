@@ -10,7 +10,7 @@
     src: "/etc/letsencrypt/live/{{ subdomains[0] }}.{{ domain }}/{{ cert_file }}"
     dest: "~/docker-compose/headscale/{{ cert_file }}"
     state: link
-    mode: "0700"
+    mode: "0600"
     owner: "101"
     group: "101"
   loop:
@@ -28,7 +28,7 @@
   ansible.builtin.template:
     src: headscale.yaml
     dest: ~/docker-compose/headscale/headscale.yaml
-    mode: "0700"
+    mode: "0600"
   notify:
     - Restart headscale.
 
@@ -38,7 +38,7 @@
     dest: ~/docker-compose/headscale/nginx.conf
     owner: "101"
     group: "101"
-    mode: "0700"
+    mode: "0600"
   notify:
     - Restart headscale.
 
@@ -46,7 +46,7 @@
   ansible.builtin.template:
     src: docker-compose.yml
     dest: ~/docker-compose/headscale/docker-compose.yml
-    mode: "0700"
+    mode: "0600"
 
 - name: Create directory for dnsmasq files.
   ansible.builtin.file:
