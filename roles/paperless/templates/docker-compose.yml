@@ -1,0 +1,95 @@
+version: "3.9"
+services:
+  cache:
+    container_name: paperless_cache
+    image: redis:6.0-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --raw incr ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - cache:/data
+      - "/etc/localtime:/etc/localtime:ro"
+  db:
+    container_name: paperless_db
+    image: postgres:14
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paperless"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - db:/var/lib/postgresql/data
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: "{{ paperless.db.password }}"
+  app:
+    container_name: paperless_app
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+      - cache
+      - gotenberg
+      - tika
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - app_data:/usr/src/paperless/data
+      - app_media:/usr/src/paperless/media
+      # - ./export:/usr/src/paperless/export
+      # - ./consume:/usr/src/paperless/consume
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      PAPERLESS_REDIS: redis://cache:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+      PAPERLESS_OCR_LANGUAGES: "deu eng"
+      PAPERLESS_OCR_LANGUAGE: "deu"
+      PAPERLESS_TIME_ZONE: Europe/Berlin
+      PAPERLESS_SECRET_KEY: "{{ paperless.secret }}"
+      PAPERLESS_DBPASS: "{{ paperless.db.password }}"
+      PAPERLESS_ADMIN_USER: "{{ paperless.admin.user }}"
+      PAPERLESS_ADMIN_PASSWORD: "{{ paperless.admin.password }}"
+    networks:
+      - frontend
+      - default
+
+  gotenberg:
+    container_name: paperless_gotenberg
+    image: gotenberg/gotenberg:7
+    restart: unless-stopped
+    environment:
+      CHROMIUM_DISABLE_ROUTES: 1
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+
+  tika:
+    container_name: paperless_tika
+    image: apache/tika:2.3.0-full
+    restart: unless-stopped
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+
+volumes:
+  app_data:
+  app_media:
+  db:
+  cache:
+
+networks:
+  default:
+  frontend:
+    external: true
