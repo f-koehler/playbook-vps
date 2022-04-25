@@ -20,6 +20,7 @@ services:
   cache:
     container_name: nextcloud_cache
     image: "redis:6-alpine"
+    restart: "unless-stopped"
     healthcheck:
       test: ["CMD-SHELL", "redis-cli --raw incr ping"]
       interval: 10s
