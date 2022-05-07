@@ -31,7 +31,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
   app:
     container_name: nextcloud_app
-    image: "nextcloud:23-apache"
+    image: "nextcloud:24-apache"
     restart: "unless-stopped"
     depends_on:
       - db
@@ -56,7 +56,7 @@ services:
       - default
   cron:
     container_name: nextcloud_cron
-    image: "nextcloud:23-apache"
+    image: "nextcloud:24-apache"
     restart: "unless-stopped"
     depends_on:
       - db
