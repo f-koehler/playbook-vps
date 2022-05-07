@@ -19,7 +19,7 @@ services:
       - "db:/var/lib/postgresql/data:rw"
   cache:
     container_name: nextcloud_cache
-    image: "redis:6-alpine"
+    image: "redis:7-alpine"
     restart: "unless-stopped"
     healthcheck:
       test: ["CMD-SHELL", "redis-cli --raw incr ping"]
