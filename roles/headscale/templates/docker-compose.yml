@@ -19,7 +19,7 @@ services:
       - "db:/var/lib/postgresql/data:rw"
   app:
     container_name: headscale_app
-    image: "headscale/headscale:0.14-alpine"
+    image: "headscale/headscale:0.15-alpine"
     restart: "unless-stopped"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
