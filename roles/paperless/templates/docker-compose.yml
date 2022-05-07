@@ -2,7 +2,7 @@ version: "3.9"
 services:
   cache:
     container_name: paperless_cache
-    image: redis:6.2-alpine
+    image: redis:7.0-alpine
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "redis-cli --raw incr ping"]
