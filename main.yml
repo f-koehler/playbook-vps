@@ -25,6 +25,8 @@
         - headscale
         - frontend
         - nextcloud
+        - paperless
+        - audiobookshelf
         - dashboard
         - healthchecks
         - uptime
