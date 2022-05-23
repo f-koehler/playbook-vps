@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  app:
+    container_name: audiobookshelf_app
+    image: "ghcr.io/advplyr/audiobookshelf"
+    restart: "unless-stopped"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - config:/config
+      - metadata:/metadata
+      - audiobooks:/audiobooks
+      - podcasts:/podcasts
+    networks:
+      - frontend
+      - default
+volumes:
+  config:
+  metadata:
+  audiobooks:
+  podcasts:
+networks:
+  default:
+  frontend:
+    external: true

@@ -62,6 +62,7 @@ services:
       - "healthchecks.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
       - "uptime.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
       - "paperless.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
+      - "audiobookshelf.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
 volumes:
   db:
   app:
