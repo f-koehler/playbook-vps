@@ -45,24 +45,6 @@ services:
       - "{{ ansible_default_ipv4.address }}:443:443"
     depends_on:
       - app
-  dns:
-    container_name: headscale_dns
-    build: ./dns
-    restart: "unless-stopped"
-    volumes:
-      - "/etc/localtime:/etc/localtime:ro"
-      - "./dns/dnsmasq.conf:/etc/dnsmasq.conf:ro"
-    ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-    extra_hosts:
-      - "svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
-      - "nextcloud.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
-      - "dashboard.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
-      - "healthchecks.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
-      - "uptime.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
-      - "paperless.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
-      - "audiobookshelf.svc.fkoehler.xyz:{{ vpn.vps.ipv4 }}"
 volumes:
   db:
   app:

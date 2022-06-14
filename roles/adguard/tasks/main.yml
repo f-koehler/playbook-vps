@@ -1,0 +1,52 @@
+- name: Copy systemd-resolved config.
+  ansible.builtin.copy:
+    src: resolved.conf
+    dest: /etc/systemd/resolved.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Restart systemd-resolved.
+
+- name: Flush handlers.
+  ansible.builtin.meta: flush_handlers
+
+- name: Symlink resolve.conf.
+  ansible.builtin.file:
+    src: /run/systemd/resolve/resolv.conf
+    dest: /etc/resolv.conf
+    force: true
+    state: link
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Create folder for adguard files.
+  ansible.builtin.file:
+    path: "~/docker-compose/adguard"
+    state: directory
+    recurse: true
+    mode: "0700"
+
+- name: Generate docker-compose file.
+  ansible.builtin.template:
+    src: docker-compose.yml
+    dest: ~/docker-compose/adguard/docker-compose.yml
+    mode: "0600"
+  notify:
+    - Restart frontend.
+
+- name: Start containers.
+  community.docker.docker_compose:
+    project_src: "~/docker-compose/adguard"
+    pull: true
+  notify:
+    - Restart frontend.
+
+- name: Generate nginx config.
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: ~/docker-compose/frontend/sites/adguard.conf
+    mode: "0600"
+  notify:
+    - Restart frontend.

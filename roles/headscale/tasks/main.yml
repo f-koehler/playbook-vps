@@ -48,27 +48,6 @@
     dest: ~/docker-compose/headscale/docker-compose.yml
     mode: "0600"
 
-- name: Create directory for dnsmasq files.
-  ansible.builtin.file:
-    path: ~/docker-compose/headscale/dns/
-    state: directory
-
-- name: Generate dnsmasq config.
-  ansible.builtin.template:
-    src: dnsmasq.conf
-    dest: ~/docker-compose/headscale/dns/dnsmasq.conf
-
-- name: Copy Dockerfile for dnsmasq.
-  ansible.builtin.copy:
-    src: Dockerfile
-    dest: ~/docker-compose/headscale/dns/Dockerfile
-
-- name: Disable systemd-resolved.
-  ansible.builtin.service:
-    name: systemd-resolved
-    state: stopped
-    enabled: false
-
 - name: Start headscale containers.
   community.docker.docker_compose:
     project_src: "~/docker-compose/headscale"
