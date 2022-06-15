@@ -1,4 +1,4 @@
-appConfig:
+ appConfig:
   theme: colorful
   layout: auto
   iconSize: medium
@@ -11,10 +11,10 @@ pageInfo:
       path: https://github.com/Lissy93/dashy
     - title: Documentation
       path: https://dashy.to/docs
-  footerText: ""
+  footerText: ''
 sections:
   - name: Productivity
-    icon: fas fa-gears
+    icon: fas fa-flask
     displayData:
       sortBy: default
       rows: 1
@@ -32,6 +32,11 @@ sections:
         url: http://nas.vpn.fkoehler.xyz
         target: newtab
         id: 1_1302_synologynas
+      - title: Paperless
+        icon: hl-paperless
+        url: https://paperless.svc.fkoehler.xyz
+        target: newtab
+        id: 2_1302_paperless
   - name: Monitoring
     icon: fas fa-chart-area
     displayData:
@@ -46,3 +51,21 @@ sections:
         url: https://healthchecks.svc.fkoehler.xyz
         target: newtab
         id: 0_1062_healthchecks
+      - title: Uptime Kuma
+        icon: hl-uptime-kuma
+        url: https://uptime.svc.fkoehler.xyz
+        target: newtab
+        id: 1_1062_uptimekuma
+  - name: Infrastructure
+    icon: fas fa-city
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Adguard
+        icon: hl-adguardhome
+        url: https://adguard.svc.fkoehler.xyz
+        id: 0_1505_adguard
