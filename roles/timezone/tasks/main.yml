@@ -1,0 +1,15 @@
+- name: Set timezone.
+  community.general.timezone:
+    name: Europe/Berlin
+
+- name: Specify that hwclock is in local time.
+  community.general.timezone:
+    hwclock: local
+
+- name: Generate timezone file.
+  ansible.builtin.copy:
+    src: timezone
+    dest: /etc/timezone
+    owner: root
+    group: root
+    mode: "644"

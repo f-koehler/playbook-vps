@@ -16,6 +16,7 @@
       loop_control:
         loop_var: role
       loop:
+        - timezone
         - ssh
         - firewall
         - haveged
