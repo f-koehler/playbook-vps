@@ -6,6 +6,8 @@ services:
     restart: "unless-stopped"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
       - "./conf.yml:/app/public/conf.yml"
     networks:
       - default

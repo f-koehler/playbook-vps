@@ -13,6 +13,8 @@ services:
     volumes:
       - cache:/data
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
   db:
     container_name: paperless_db
     image: postgres:14
@@ -26,6 +28,8 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
@@ -50,6 +54,8 @@ services:
       # - ./export:/usr/src/paperless/export
       # - ./consume:/usr/src/paperless/consume
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
     environment:
       PAPERLESS_REDIS: redis://cache:6379
       PAPERLESS_DBHOST: db
@@ -76,6 +82,8 @@ services:
       CHROMIUM_DISABLE_ROUTES: 1
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
 
   tika:
     container_name: paperless_tika
@@ -83,6 +91,8 @@ services:
     restart: unless-stopped
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
 
 volumes:
   app_data:

@@ -17,6 +17,9 @@ services:
       start_period: 10s
     volumes:
       - "db:/var/lib/postgresql/data:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
   cache:
     container_name: nextcloud_cache
     image: "redis:7-alpine"
@@ -29,6 +32,8 @@ services:
       start_period: 10s
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
   app:
     container_name: nextcloud_app
     image: "nextcloud:24-apache"
@@ -38,6 +43,8 @@ services:
       - cache
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
       - "app:/var/www/html"
     environment:
       POSTGRES_PASSWORD: "{{ nextcloud.db.password }}"
@@ -64,6 +71,8 @@ services:
     entrypoint: /cron.sh
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
       - "app:/var/www/html"
 volumes:
   db:
