@@ -30,7 +30,7 @@ services:
       - db
   proxy:
     container_name: headscale_proxy
-    image: "nginx:latest"
+    image: "nginx:1.22.0-alpine"
     restart: "unless-stopped"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
