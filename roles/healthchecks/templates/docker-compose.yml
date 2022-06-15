@@ -20,7 +20,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
   app:
     container_name: healthchecks_app
-    image: linuxserver/healthchecks:2.2.1
+    image: linuxserver/healthchecks:2.2.20220613
     restart: "unless-stopped"
     depends_on:
       - db
