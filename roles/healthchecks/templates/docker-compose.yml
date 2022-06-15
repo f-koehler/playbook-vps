@@ -9,6 +9,7 @@ services:
       POSTGRES_USER: hc
       PGDATA: /var/lib/postgresql/data
       POSTGRES_DB: hc
+      TZ: "Europe/Berlin"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U hc"]
       interval: 10s
@@ -18,6 +19,8 @@ services:
     volumes:
       - "db:/var/lib/postgresql/data:rw"
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
   app:
     container_name: healthchecks_app
     image: linuxserver/healthchecks:2.2.20220613
@@ -46,11 +49,12 @@ services:
       REGENERATE_SETTINGS: "False"
       SITE_NAME: "{{ healthchecks.site.name }}"
       SITE_ROOT: "{{ healthchecks.site.root }}"
-      TZ: "Europe/Berlin"
     volumes:
       - "app:/config"
       - "./local_settings.py:/config/local_settings.py"
       - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
     networks:
       - frontend
       - default
