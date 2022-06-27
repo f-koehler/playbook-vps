@@ -94,11 +94,22 @@ services:
       - "/etc/timezone:/etc/timezone:ro"
       - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
 
+  protonmail:
+    container_name: paperless_protonmail
+    image: shenxn/protonmail-bridge:latest
+    restart: unless-stopped
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+      - "protonmail:/root"
+
 volumes:
   app_data:
   app_media:
   db:
   cache:
+  protonmail:
 
 networks:
   default:
