@@ -2,7 +2,7 @@ version: "3.9"
 services:
   app:
     container_name: audiobookshelf_app
-    image: "ghcr.io/advplyr/audiobookshelf:2.0.23"
+    image: "ghcr.io/advplyr/audiobookshelf:2.1.0"
     restart: "unless-stopped"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
