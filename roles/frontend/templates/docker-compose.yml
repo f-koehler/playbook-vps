@@ -2,7 +2,7 @@ version: "3.9"
 services:
   app:
     container_name: frontend_app
-    image: "nginx:1.23.0-alpine"
+    image: "nginx:1.23.1-alpine"
     restart: "unless-stopped"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
