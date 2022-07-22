@@ -16,6 +16,12 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --timeout 1 --tries 1 -O /dev/null http://localhost:3000 && nslookup google.com localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 volumes:
   config:
   work:
