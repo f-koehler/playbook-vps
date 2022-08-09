@@ -51,8 +51,8 @@ services:
     volumes:
       - app_data:/usr/src/paperless/data
       - app_media:/usr/src/paperless/media
-      # - ./export:/usr/src/paperless/export
-      # - ./consume:/usr/src/paperless/consume
+      - app_export:/usr/src/paperless/export
+      - app_consume:/usr/src/paperless/consume
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
       - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
@@ -107,6 +107,8 @@ services:
 volumes:
   app_data:
   app_media:
+  app_consume:
+  app_export:
   db:
   cache:
   protonmail:
