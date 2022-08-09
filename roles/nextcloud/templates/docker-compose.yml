@@ -51,8 +51,8 @@ services:
       POSTGRES_USER: nextcloud
       POSTGRES_DB: nextcloud
       POSTGRES_HOST: nextcloud_db
-      nextcloud.admin.user: "{{ nextcloud.admin.user }}"
-      nextcloud.admin.password: "{{ nextcloud.admin.password }}"
+      NEXTCLOUD_ADMIN_USER: "{{ nextcloud.admin.user }}"
+      NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud.admin.password }}"
       NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.svc.fkoehler.xyz nextcloud_app"
       # OVERWRITEWEBROOT: "/nextcloud"
       OVERWRITEHOST: "nextcloud.svc.fkoehler.xyz"
