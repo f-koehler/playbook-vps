@@ -18,3 +18,8 @@
     proto: "tcp"
     interface: tailscale0
     direction: in
+
+- name: Start containers.
+  community.docker.docker_compose:
+    project_src: "~/docker-compose/digikam"
+    pull: true
