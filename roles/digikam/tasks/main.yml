@@ -1,0 +1,20 @@
+- name: Create folder for docker-compose files.
+  ansible.builtin.file:
+    path: "~/docker-compose/digikam"
+    state: directory
+    recurse: true
+    mode: "0700"
+
+- name: Generate docker-compose file.
+  ansible.builtin.template:
+    src: docker-compose.yml
+    dest: ~/docker-compose/digikam/docker-compose.yml
+    mode: "0600"
+
+- name: Allow access over tailscale.
+  community.general.ufw:
+    rule: allow
+    port: 33306
+    proto: "tcp"
+    interface: tailscale0
+    direction: in

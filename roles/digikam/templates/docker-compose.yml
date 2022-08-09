@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  db:
+    container_name: digikam_db
+    image: "mariadb:10.8"
+    restart: "unless-stopped"
+    environment:
+      MARIADB_ROOT_PASSWORD: "{{ digikam.db.password }}"
+      MARIADB_USER: "{{ digikam.db.user }}"
+      MARIADB_PASSWORD: "{{ digikam.db.password }}"
+      MARIADB_DATABASE: "{{ digikam.db.name }}"
+      MARIADB_AUTO_UPGRADE: "true"
+    volumes:
+      - "db:/var/lib/mysql:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+    ports:
+      - "{{ vpn.vps.ipv4 }}:{{ digikam.db.port }}:3306"
+    command: "--max_allowed_packet=128M"
+volumes:
+  db:
