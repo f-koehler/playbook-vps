@@ -6,9 +6,6 @@
     - name: Set hostname.
       ansible.builtin.hostname:
         name: vps
-    - name: Update pacman cache.
-      community.general.pacman:
-        update_cache: true
   tasks:
     - name: Import roles.
       ansible.builtin.include_role:
@@ -17,18 +14,20 @@
         loop_var: role
       loop:
         - timezone
-        - ssh
-        - firewall
-        - haveged
-        - docker
-        - cert
-        - dns
-        - headscale
-        - frontend
-        - nextcloud
-        - paperless
-        - dashboard
+        - podman
         - healthchecks
-        - uptime
-        - adguard
-        - digikam
+        - nextcloud
+
+        # - ssh
+        # - firewall
+        # - haveged
+        # - cert
+        # - dns
+        # - headscale
+        # - frontend
+        # - nextcloud
+        # - paperless
+        # - dashboard
+        # - uptime
+        # - adguard
+        # - digikam

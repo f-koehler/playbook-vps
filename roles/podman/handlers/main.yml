@@ -1,0 +1,2 @@
+- name: Podman migrate.
+  ansible.builtin.command: podman system migrate

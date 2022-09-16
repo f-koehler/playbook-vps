@@ -1,37 +1,70 @@
-- name: Create folder for docker-compose files.
-  ansible.builtin.file:
-    path: "~/docker-compose/healthchecks"
-    state: directory
-    recurse: true
-    mode: "0700"
+- name: Create btrfs subvolumes.
+  btrfs_subvolume:
+    path: /home/healthchecks/volumes/{{ subvolume }}
+    state: present
+    owner: healthchecks
+    group: healthchecks
+  loop:
+    - db
+    - app
+  loop_control:
+    loop_var: subvolume
 
-- name: Generate config file.
+- name: Generate healthchecks config.
   ansible.builtin.template:
     src: local_settings.py
-    dest: ~/docker-compose/healthchecks/local_settings.py
-    mode: "0600"
-  notify:
-    - Restart healthchecks.
-    - Restart frontend.
+    dest: /home/healthchecks/volumes/app/local_settings.py
+    owner: healthchecks
+    group: healthchecks
+    mode: 0600
 
-- name: Generate docker-compose file.
-  ansible.builtin.template:
-    src: docker-compose.yml
-    dest: ~/docker-compose/healthchecks/docker-compose.yml
-    mode: "0600"
-  notify:
-    - Restart frontend.
+- name: Create network.
+  become: true
+  become_user: "healthchecks"
+  containers.podman.podman_network:
+    name: healthchecks
+    internal: true
 
-- name: Start containers.
-  community.docker.docker_compose:
-    project_src: "~/docker-compose/healthchecks"
-    pull: true
-    build: true
+- name: Create db container.
+  become: true
+  become_user: "healthchecks"
+  containers.podman.podman_container:
+    name: healthchecks_db
+    image: "docker.io/postgres:14"
+    image_strict: true
+    restart_policy: always
+    log_driver: "k8s-file"
+    env:
+      POSTGRES_PASSWORD: "{{ healthchecks.db.password }}"
+      POSTGRES_USER: hc
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: hc
+    network:
+      - healthchecks
+    volumes:
+      - "/home/healthchecks/volumes/db:/var/lib/postgresql/data:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
 
-- name: Generate nginx config.
-  ansible.builtin.template:
-    src: nginx.conf
-    dest: ~/docker-compose/frontend/sites/healthchecks.conf
-    mode: "0600"
-  notify:
-    - Restart frontend.
+- name: Create app container.
+  become: true
+  become_user: healthchecks
+  containers.podman.podman_container:
+    name: healthchecks_app
+    image: docker.io/linuxserver/healthchecks:2.3.20220812
+    image_strict: true
+    restart_policy: always
+    requires: healthchecks_db
+    log_driver: "k8s-file"
+    env:
+      SUPERUSER_EMAIL: "{{ healthchecks.admin.email }}"
+      SUPERUSER_PASSWORD: "{{ healthchecks.admin.password }}"
+      REGENERATE_SETTINGS: "False"
+    network:
+      - healthchecks
+    volumes:
+      - "/home/healthchecks/volumes/app/:/config:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"

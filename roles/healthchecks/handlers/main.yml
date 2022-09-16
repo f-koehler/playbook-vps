@@ -1,4 +1,0 @@
-- name: Restart healthchecks.
-  community.docker.docker_compose:
-    project_src: "~/docker-compose/healthchecks"
-    restarted: true

@@ -1,29 +1,85 @@
-- name: Create folder for docker-compose files.
-  ansible.builtin.file:
-    path: "~/docker-compose/nextcloud"
-    state: directory
-    recurse: true
-    mode: "0700"
+- name: Create btrfs subvolumes.
+  btrfs_subvolume:
+    path: /home/nextcloud/volumes/{{ subvolume }}
+    state: present
+    owner: nextcloud
+    group: nextcloud
+  loop:
+    - db
+    - app
+  loop_control:
+    loop_var: subvolume
 
-- name: Generate docker-compose file.
-  ansible.builtin.template:
-    src: docker-compose.yml
-    dest: ~/docker-compose/nextcloud/docker-compose.yml
-    mode: "0600"
-  notify:
-    - Restart frontend.
+- name: Create network.
+  become: true
+  become_user: "nextcloud"
+  containers.podman.podman_network:
+    name: nextcloud
+    internal: true
 
-- name: Start containers.
-  community.docker.docker_compose:
-    project_src: "~/docker-compose/nextcloud"
-    pull: true
-  notify:
-    - Restart frontend.
+- name: Create db container.
+  become: true
+  become_user: "nextcloud"
+  containers.podman.podman_container:
+    name: nextcloud_db
+    image: "docker.io/postgres:14"
+    image_strict: true
+    restart_policy: always
+    log_driver: "k8s-file"
+    env:
+      POSTGRES_PASSWORD: "{{ nextcloud.db.password }}"
+      POSTGRES_USER: nextcloud
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: nextcloud
+    network:
+      - nextcloud
+    volumes:
+      - "/home/nextcloud/volumes/db:/var/lib/postgresql/data:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
 
-- name: Generate nginx config.
-  ansible.builtin.template:
-    src: nginx.conf
-    dest: ~/docker-compose/frontend/sites/nextcloud.conf
-    mode: "0600"
-  notify:
-    - Restart frontend.
+- name: Create app container.
+  become: true
+  become_user: nextcloud
+  containers.podman.podman_container:
+    name: nextcloud_app
+    image: "docker.io/nextcloud:24-apache"
+    image_strict: true
+    requires: nextcloud_db
+    restart_policy: always
+    log_driver: "k8s-file"
+    env:
+      POSTGRES_PASSWORD: "{{ nextcloud.db.password }}"
+      POSTGRES_USER: nextcloud
+      POSTGRES_DB: nextcloud
+      POSTGRES_HOST: nextcloud_db
+      NEXTCLOUD_ADMIN_USER: "{{ nextcloud.admin.user }}"
+      NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud.admin.password }}"
+      NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.svc.fkoehler.xyz nextcloud_app"
+      OVERWRITEHOST: "nextcloud.svc.fkoehler.xyz"
+      OVERWRITEPROTOCOL: "https"
+    network:
+      - nextcloud
+    volumes:
+      - "/home/nextcloud/volumes/app:/var/www/html:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+
+- name: Create cron container.
+  become: true
+  become_user: nextcloud
+  containers.podman.podman_container:
+    name: nextcloud_cron
+    image: "docker.io/nextcloud:24-apache"
+    image_strict: true
+    requires: nextcloud_app
+    restart_policy: always
+    log_driver: "k8s-file"
+    entrypoint: /cron.sh
+    volumes:
+      - "/home/nextcloud/volumes/app:/var/www/html:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"

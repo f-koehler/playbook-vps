@@ -1,0 +1,70 @@
+- name: Install podman.
+  ansible.builtin.package:
+    state: present
+    name:
+      - podman
+      - slirp4netns
+      - fuse-overlayfs
+      - cni-plugins
+      - aardvark-dns
+
+- name: Create podman groups.
+  ansible.builtin.group:
+    name: "{{ group }}"
+    system: true
+    state: present
+  loop: "{{ podman.users }}"
+  loop_control:
+    loop_var: group
+
+- name: Create podman users.
+  ansible.builtin.user:
+    name: "{{ user }}"
+    system: true
+    state: present
+    home: "/home/{{ user }}"
+    group: "{{ user }}"
+  loop: "{{ podman.users }}"
+  loop_control:
+    loop_var: user
+
+- name: Enable lingering for podman users.
+  ansible.builtin.command: "loginctl enable-linger {{ user }}"
+  args:
+    creates: "/var/lib/systemd/linger/{{ user }}"
+  loop: "{{ podman.users }}"
+  loop_control:
+    loop_var: user
+
+- name: Increase number of user namespaces.
+  ansible.posix.sysctl:
+    name: "user.max_user_namespaces"
+    value: "28633"
+
+- name: Create subuid/subgid mapping.
+  ansible.builtin.template:
+    src: "{{ template }}"
+    dest: "/etc/{{ template }}"
+    mode: 0644
+    owner: root
+    group: root
+  loop:
+    - subuid
+    - subgid
+  loop_control:
+    loop_var: template
+  notify:
+    - Podman migrate.
+
+- name: Create btrfs subvolumes for podman containers.
+  btrfs_subvolume:
+    path: "/home/{{ user }}/volumes"
+    state: present
+    owner: "{{ user }}"
+    group: "{{ user }}"
+  loop: "{{ podman.users }}"
+  loop_control:
+    loop_var: user
+
+- name: Flush handlers.
+  ansible.builtin.meta: flush_handlers

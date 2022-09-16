@@ -1,5 +1,9 @@
 {
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/ansible-community/schemas/main/f/ansible.json#/$defs/playbook": "file:///Users/fkoehler/Code/playbook-vps/main.yml"
+    "https://raw.githubusercontent.com/ansible-community/schemas/main/f/ansible.json#/$defs/playbook": [
+      "file:///Users/fkoehler/Code/playbook-vps/main.yml",
+      "file:///home/fkoehler/code/ansible-workspace/playbooks/vps/main.yml"
+    ],
+    "https://json.schemastore.org/cheatsheets.json": "file:///home/fkoehler/code/ansible-workspace/playbooks/vps/roles/dashboard/templates/conf.yml"
   }
 }
