@@ -17,6 +17,7 @@
         - podman
         - healthchecks
         - nextcloud
+        - paperless
 
         # - ssh
         # - firewall

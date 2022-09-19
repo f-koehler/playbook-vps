@@ -1,29 +1,151 @@
-- name: Create folder for docker-compose files.
-  ansible.builtin.file:
-    path: "~/docker-compose/paperless"
-    state: directory
-    recurse: true
-    mode: "0700"
+- name: Create btrfs subvolumes.
+  btrfs_subvolume:
+    path: /home/paperless/volumes/{{ subvolume }}
+    state: present
+    owner: paperless
+    group: paperless
+  loop:
+    - db
+    - app
+    - app/data
+    - app/media
+    - app/consume
+    - app/export
+    - cache
+    - protonmail
+  loop_control:
+    loop_var: subvolume
 
-- name: Generate docker-compose file.
-  ansible.builtin.template:
-    src: docker-compose.yml
-    dest: ~/docker-compose/paperless/docker-compose.yml
-    mode: "0600"
-  notify:
-    - Restart frontend.
+- name: Create network.
+  become: true
+  become_user: "paperless"
+  containers.podman.podman_network:
+    name: paperless
+    internal: true
 
-- name: Start containers.
-  community.docker.docker_compose:
-    project_src: "~/docker-compose/paperless"
-    pull: true
-  notify:
-    - Restart frontend.
+- name: Create cache container.
+  become: true
+  become_user: paperless
+  containers.podman.podman_container:
+    name: paperless_cache
+    image: "docker.io/redis:7-alpine"
+    image_strict: true
+    restart_policy: always
+    log_driver: "k8s-file"
+    network:
+      - paperless
+    volumes:
+      - "/home/paperless/volumes/cache:/data:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
 
-- name: Generate nginx config.
-  ansible.builtin.template:
-    src: nginx.conf
-    dest: ~/docker-compose/frontend/sites/paperless.conf
-    mode: "0600"
-  notify:
-    - Restart frontend.
+- name: Create db container.
+  become: true
+  become_user: paperless
+  containers.podman.podman_container:
+    name: paperless_db
+    image: "docker.io/postgres:14"
+    image_strict: true
+    restart_policy: always
+    log_driver: "k8s-file"
+    env:
+      POSTGRES_PASSWORD: "{{ paperless.db.password }}"
+      POSTGRES_USER: paperless
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: paperless
+    network:
+      - paperless
+    volumes:
+      - "/home/paperless/volumes/db:/var/lib/postgresql/data:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+
+- name: Create gotenberg container.
+  become: true
+  become_user: paperless
+  containers.podman.podman_container:
+    name: paperless_gotenberg
+    image: "docker.io/gotenberg/gotenberg:7"
+    image_strict: true
+    restart_policy: always
+    log_driver: "k8s-file"
+    env:
+      CHROMIUM_DISABLE_ROUTES: 1
+    network:
+      - paperless
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+
+- name: Create tika container.
+  become: true
+  become_user: paperless
+  containers.podman.podman_container:
+    name: paperless_tika
+    image: "docker.io/apache/tika:2.4.1-full"
+    image_strict: true
+    restart_policy: always
+    log_driver: "k8s-file"
+    network:
+      - paperless
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+
+- name: Create protonmail container.
+  become: true
+  become_user: paperless
+  containers.podman.podman_container:
+    name: paperless_protonmail
+    image: "docker.io/shenxn/protonmail-bridge:latest"
+    image_strict: true
+    restart_policy: always
+    log_driver: "k8s-file"
+    network:
+      - paperless
+    volumes:
+      - "/home/paperless/volumes/protonmail:/root:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+
+- name: Create app container.
+  become: true
+  become_user: paperless
+  containers.podman.podman_container:
+    name: paperless_app
+    image: "ghcr.io/paperless-ngx/paperless-ngx:1.8.0"
+    image_strict: true
+    requires:
+      - paperless_cache
+      - paperless_db
+      - paperless_gotenberg
+      - paperless_tika
+      - paperless_protonmail
+    restart_policy: always
+    log_driver: "k8s-file"
+    env:
+      PAPERLESS_REDIS: redis://paperless_cache:6379
+      PAPERLESS_DBHOST: db
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: "http://paperless_gotenberg:3000"
+      PAPERLESS_TIKA_ENDPOINT: "http://paperless_tika:9998"
+      PAPERLESS_OCR_LANGUAGES: "deu eng"
+      PAPERLESS_OCR_LANGUAGE: "deu"
+      PAPERLESS_TIME_ZONE: Europe/Berlin
+      PAPERLESS_SECRET_KEY: "{{ paperless.secret }}"
+      PAPERLESS_DBPASS: "{{ paperless.db.password }}"
+      PAPERLESS_ADMIN_USER: "{{ paperless.admin.user }}"
+      PAPERLESS_ADMIN_PASSWORD: "{{ paperless.admin.password }}"
+      PAPERLESS_URL: "https://paperless.svc.fkoehler.xyz"
+    network:
+      - paperless
+    volumes:
+      - "/home/paperless/volumes/db:/var/lib/postgresql/data:rw"
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
