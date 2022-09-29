@@ -16,24 +16,23 @@
   loop_control:
     loop_var: subvolume
 
-- name: Create network.
+- name: Create pod.
   become: true
   become_user: "paperless"
-  containers.podman.podman_network:
+  containers.podman.podman_pod:
     name: paperless
-    internal: true
+    state: started
 
 - name: Create cache container.
   become: true
   become_user: paperless
   containers.podman.podman_container:
-    name: paperless_cache
+    name: cache
     image: "docker.io/redis:7-alpine"
     image_strict: true
     restart_policy: always
+    pod: paperless
     log_driver: "k8s-file"
-    network:
-      - paperless
     volumes:
       - "/home/paperless/volumes/cache:/data:rw"
       - "/etc/localtime:/etc/localtime:ro"
@@ -44,18 +43,17 @@
   become: true
   become_user: paperless
   containers.podman.podman_container:
-    name: paperless_db
+    name: db
     image: "docker.io/postgres:14"
     image_strict: true
     restart_policy: always
+    pod: paperless
     log_driver: "k8s-file"
     env:
       POSTGRES_PASSWORD: "{{ paperless.db.password }}"
       POSTGRES_USER: paperless
       PGDATA: /var/lib/postgresql/data
       POSTGRES_DB: paperless
-    network:
-      - paperless
     volumes:
       - "/home/paperless/volumes/db:/var/lib/postgresql/data:rw"
       - "/etc/localtime:/etc/localtime:ro"
@@ -66,15 +64,14 @@
   become: true
   become_user: paperless
   containers.podman.podman_container:
-    name: paperless_gotenberg
+    name: gotenberg
     image: "docker.io/gotenberg/gotenberg:7"
     image_strict: true
     restart_policy: always
+    pod: paperless
     log_driver: "k8s-file"
     env:
       CHROMIUM_DISABLE_ROUTES: 1
-    network:
-      - paperless
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
@@ -84,13 +81,12 @@
   become: true
   become_user: paperless
   containers.podman.podman_container:
-    name: paperless_tika
+    name: tika
     image: "docker.io/apache/tika:2.4.1-full"
     image_strict: true
     restart_policy: always
+    pod: paperless
     log_driver: "k8s-file"
-    network:
-      - paperless
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
@@ -100,13 +96,12 @@
   become: true
   become_user: paperless
   containers.podman.podman_container:
-    name: paperless_protonmail
+    name: protonmail
     image: "docker.io/shenxn/protonmail-bridge:latest"
     image_strict: true
     restart_policy: always
+    pod: paperless
     log_driver: "k8s-file"
-    network:
-      - paperless
     volumes:
       - "/home/paperless/volumes/protonmail:/root:rw"
       - "/etc/localtime:/etc/localtime:ro"
@@ -118,15 +113,16 @@
   become_user: paperless
   containers.podman.podman_container:
     name: paperless_app
-    image: "ghcr.io/paperless-ngx/paperless-ngx:1.8.0"
+    image: "ghcr.io/paperless-ngx/paperless-ngx:1.9.2"
     image_strict: true
     requires:
-      - paperless_cache
-      - paperless_db
-      - paperless_gotenberg
-      - paperless_tika
-      - paperless_protonmail
+      - cache
+      - db
+      - gotenberg
+      - tika
+      - protonmail
     restart_policy: always
+    pod: paperless
     log_driver: "k8s-file"
     env:
       PAPERLESS_REDIS: redis://paperless_cache:6379
@@ -142,8 +138,6 @@
       PAPERLESS_ADMIN_USER: "{{ paperless.admin.user }}"
       PAPERLESS_ADMIN_PASSWORD: "{{ paperless.admin.password }}"
       PAPERLESS_URL: "https://paperless.svc.fkoehler.xyz"
-    network:
-      - paperless
     volumes:
       - "/home/paperless/volumes/db:/var/lib/postgresql/data:rw"
       - "/etc/localtime:/etc/localtime:ro"
