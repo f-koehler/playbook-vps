@@ -18,5 +18,21 @@
     mode: "0644"
   notify: Restart sshd.
 
+- name: Block standard SSH port.
+  ansible.posix.firewalld:
+    permanent: true
+    immediate: true
+    service: ssh
+    state: disabled
+    zone: public
+
+- name: Open custom SSH port.
+  ansible.posix.firewalld:
+    permanent: true
+    immediate: true
+    port: "{{ ssh_port }}/tcp"
+    state: enabled
+    zone: public
+
 - name: Flush handlers.
   ansible.builtin.meta: flush_handlers
