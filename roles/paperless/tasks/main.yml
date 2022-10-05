@@ -59,6 +59,11 @@
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
       - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+    healthcheck: "pg_isready -U {{ healthchecks_db_user }} -d {{ healthchecks_db_name }} "
+    healthcheck_interval: 30s
+    healthcheck_retries: 3
+    healthcheck_start_period: 10s
+    healthcheck_timeout: 30s
 
 - name: Create gotenberg container.
   become: true
