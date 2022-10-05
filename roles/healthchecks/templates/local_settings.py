@@ -19,10 +19,10 @@ CSRF_TRUSTED_ORIGINS = [{% for host in healthchecks.allowed_hosts %}
 SITE_NAME = "{{ healthchecks.site.name }}"
 SITE_ROOT = "{{ healthchecks.site.root }}"
 REGISTRATION_OPEN = False
-SECRET_KEY = "{{ healthchecks.secret }}"
+SECRET_KEY = "{{ healthchecks_secret }}"
 
 DB = "postgres"
-DB_HOST = "healthchecks_db"
-DB_PASSWORD = "{{ healthchecks.db.password }}"
-DB_USER = "{{ healthchecks.db.user }}"
-DB_TABLE = "{{ healthchecks.db.table }}"
+DB_HOST = "db"
+DB_PASSWORD = "{{ healthchecks_db_password }}"
+DB_USER = "{{ healthchecks_db_user }}"
+DB_TABLE = "{{ healthchecks_db_name }}"

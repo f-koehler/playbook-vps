@@ -18,29 +18,28 @@
     group: healthchecks
     mode: 0600
 
-- name: Create network.
+- name: Create pod.
   become: true
   become_user: "healthchecks"
-  containers.podman.podman_network:
+  containers.podman.podman_pod:
     name: healthchecks
-    internal: true
+    state: started
 
 - name: Create db container.
   become: true
   become_user: "healthchecks"
   containers.podman.podman_container:
-    name: healthchecks_db
+    name: db
     image: "docker.io/postgres:14"
     image_strict: true
     restart_policy: always
+    pod: healthchecks
     log_driver: "k8s-file"
     env:
-      POSTGRES_PASSWORD: "{{ healthchecks.db.password }}"
+      POSTGRES_PASSWORD: "{{ healthchecks_db_password }}"
       POSTGRES_USER: hc
       PGDATA: /var/lib/postgresql/data
       POSTGRES_DB: hc
-    network:
-      - healthchecks
     volumes:
       - "/home/healthchecks/volumes/db:/var/lib/postgresql/data:rw"
       - "/etc/localtime:/etc/localtime:ro"
@@ -51,18 +50,17 @@
   become: true
   become_user: healthchecks
   containers.podman.podman_container:
-    name: healthchecks_app
+    name: app
     image: docker.io/linuxserver/healthchecks:2.3.20220812
     image_strict: true
+    pod: healthchecks
     restart_policy: always
-    requires: healthchecks_db
+    requires: db
     log_driver: "k8s-file"
     env:
-      SUPERUSER_EMAIL: "{{ healthchecks.admin.email }}"
-      SUPERUSER_PASSWORD: "{{ healthchecks.admin.password }}"
+      SUPERUSER_EMAIL: "{{ healthchecks_admin_email }}"
+      SUPERUSER_PASSWORD: "{{ healthchecks_admin_password }}"
       REGENERATE_SETTINGS: "False"
-    network:
-      - healthchecks
     volumes:
       - "/home/healthchecks/volumes/app/:/config:rw"
       - "/etc/localtime:/etc/localtime:ro"
