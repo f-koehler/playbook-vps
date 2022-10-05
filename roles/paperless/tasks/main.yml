@@ -1,6 +1,6 @@
 - name: Create btrfs subvolumes.
   btrfs_subvolume:
-    path: /home/paperless/volumes/{{ subvolume }}
+    path: "/home/paperless/volumes/{{ subvolume }}"
     state: present
     owner: paperless
     group: paperless
@@ -50,10 +50,10 @@
     pod: paperless
     log_driver: "k8s-file"
     env:
-      POSTGRES_PASSWORD: "{{ paperless.db.password }}"
-      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: "{{ paperless_db_password }}"
+      POSTGRES_USER: "{{ paperless_db_user }}"
       PGDATA: /var/lib/postgresql/data
-      POSTGRES_DB: paperless
+      POSTGRES_DB: "{{ paperless_db_name }}"
     volumes:
       - "/home/paperless/volumes/db:/var/lib/postgresql/data:rw"
       - "/etc/localtime:/etc/localtime:ro"
@@ -127,16 +127,18 @@
     env:
       PAPERLESS_REDIS: redis://paperless_cache:6379
       PAPERLESS_DBHOST: db
+      PAPERLESS_DBUSER: "{{ paperless_db_user }}"
+      PAPERLESS_DBNAME: "{{ paperless_db_name }}"
       PAPERLESS_TIKA_ENABLED: 1
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: "http://paperless_gotenberg:3000"
       PAPERLESS_TIKA_ENDPOINT: "http://paperless_tika:9998"
       PAPERLESS_OCR_LANGUAGES: "deu eng"
       PAPERLESS_OCR_LANGUAGE: "deu"
       PAPERLESS_TIME_ZONE: Europe/Berlin
-      PAPERLESS_SECRET_KEY: "{{ paperless.secret }}"
-      PAPERLESS_DBPASS: "{{ paperless.db.password }}"
-      PAPERLESS_ADMIN_USER: "{{ paperless.admin.user }}"
-      PAPERLESS_ADMIN_PASSWORD: "{{ paperless.admin.password }}"
+      PAPERLESS_SECRET_KEY: "{{ paperless_secret }}"
+      PAPERLESS_DBPASS: "{{ paperless_db_password }}"
+      PAPERLESS_ADMIN_USER: "{{ paperless_admin_user }}"
+      PAPERLESS_ADMIN_PASSWORD: "{{ paperless_admin_password }}"
       PAPERLESS_URL: "https://paperless.svc.fkoehler.xyz"
     volumes:
       - "/home/paperless/volumes/db:/var/lib/postgresql/data:rw"
