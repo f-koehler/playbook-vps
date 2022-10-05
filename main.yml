@@ -10,27 +10,31 @@
       community.general.pacman:
         update_cache: true
   tasks:
-    - name: Import roles.
+    - name: Basic setup.
       ansible.builtin.include_role:
         name: "{{ role }}"
       loop_control:
         loop_var: role
       loop:
         - timezone
+        - firewall
+        - ssh
+        - artis3n.tailscale
+    - name: Setup containers.
+      ansible.builtin.include_role:
+        name: "{{ role }}"
+      loop_control:
+        loop_var: role
+      loop:
         - podman
         - healthchecks
         - nextcloud
         - paperless
 
-        # - ssh
-        # - firewall
         # - haveged
         # - cert
         # - dns
-        # - headscale
         # - frontend
-        # - nextcloud
-        # - paperless
         # - dashboard
         # - uptime
         # - adguard
