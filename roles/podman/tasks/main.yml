@@ -13,7 +13,7 @@
     name: "{{ group }}"
     system: true
     state: present
-  loop: "{{ podman.users }}"
+  loop: "{{ podman_users }}"
   loop_control:
     loop_var: group
 
@@ -24,7 +24,7 @@
     state: present
     home: "/home/{{ user }}"
     group: "{{ user }}"
-  loop: "{{ podman.users }}"
+  loop: "{{ podman_users }}"
   loop_control:
     loop_var: user
 
@@ -32,7 +32,7 @@
   ansible.builtin.command: "loginctl enable-linger {{ user }}"
   args:
     creates: "/var/lib/systemd/linger/{{ user }}"
-  loop: "{{ podman.users }}"
+  loop: "{{ podman_users }}"
   loop_control:
     loop_var: user
 
@@ -62,7 +62,7 @@
     state: present
     owner: "{{ user }}"
     group: "{{ user }}"
-  loop: "{{ podman.users }}"
+  loop: "{{ podman_users }}"
   loop_control:
     loop_var: user
 

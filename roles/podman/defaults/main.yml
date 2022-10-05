@@ -1,0 +1,6 @@
+podman_users:
+  - adguard
+  - headscale
+  - healthchecks
+  - nextcloud
+  - paperless
