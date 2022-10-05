@@ -28,10 +28,10 @@
     pod: nextcloud
     log_driver: "k8s-file"
     env:
-      POSTGRES_PASSWORD: "{{ nextcloud.db.password }}"
-      POSTGRES_USER: nextcloud
+      POSTGRES_PASSWORD: "{{ nextcloud_db_password }}"
+      POSTGRES_USER: "{{ nextcloud_db_user }}"
       PGDATA: /var/lib/postgresql/data
-      POSTGRES_DB: nextcloud
+      POSTGRES_DB: "{{ nextcloud_db_name }}"
     volumes:
       - "/home/nextcloud/volumes/db:/var/lib/postgresql/data:rw"
       - "/etc/localtime:/etc/localtime:ro"
@@ -50,12 +50,12 @@
     pod: nextcloud
     log_driver: "k8s-file"
     env:
-      POSTGRES_PASSWORD: "{{ nextcloud.db.password }}"
-      POSTGRES_USER: nextcloud
-      POSTGRES_DB: nextcloud
+      POSTGRES_PASSWORD: "{{ nextcloud_db_password }}"
+      POSTGRES_USER: "{{ nextcloud_db_user }}"
+      POSTGRES_DB: "{{ nextcloud_db_name }}"
       POSTGRES_HOST: db
-      NEXTCLOUD_ADMIN_USER: "{{ nextcloud.admin.user }}"
-      NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud.admin.password }}"
+      NEXTCLOUD_ADMIN_USER: "{{ nextcloud_admin_user }}"
+      NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
       NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.svc.fkoehler.xyz nextcloud_app"
       OVERWRITEHOST: "nextcloud.svc.fkoehler.xyz"
       OVERWRITEPROTOCOL: "https"
