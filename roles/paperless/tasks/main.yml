@@ -38,6 +38,11 @@
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
       - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+    healthcheck: "redis-cli --raw incr healthcheck_ping"
+    healthcheck_interval: 30s
+    healthcheck_retries: 3
+    healthcheck_start_period: 10s
+    healthcheck_timeout: 30s
 
 - name: Create db container.
   become: true
@@ -150,3 +155,8 @@
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
       - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+    healthcheck: "curl -f localhost:8000"
+    healthcheck_interval: 30s
+    healthcheck_retries: 3
+    healthcheck_start_period: 10s
+    healthcheck_timeout: 30s
