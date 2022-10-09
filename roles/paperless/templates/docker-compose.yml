@@ -87,7 +87,7 @@ services:
 
   tika:
     container_name: paperless_tika
-    image: apache/tika:2.4.1-full
+    image: apache/tika:2.5.0-full
     restart: unless-stopped
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
