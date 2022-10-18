@@ -23,7 +23,7 @@ services:
       - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
   app:
     container_name: healthchecks_app
-    image: linuxserver/healthchecks:2.3.20220812
+    image: linuxserver/healthchecks:2.4.1
     restart: "unless-stopped"
     depends_on:
       - db
