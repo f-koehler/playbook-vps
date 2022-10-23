@@ -36,7 +36,7 @@ services:
       - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
   app:
     container_name: nextcloud_app
-    image: "nextcloud:24-apache"
+    image: "nextcloud:25-apache"
     restart: "unless-stopped"
     depends_on:
       - db
@@ -63,7 +63,7 @@ services:
       - default
   cron:
     container_name: nextcloud_cron
-    image: "nextcloud:24-apache"
+    image: "nextcloud:25-apache"
     restart: "unless-stopped"
     depends_on:
       - db
