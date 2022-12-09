@@ -16,19 +16,14 @@
       loop_control:
         loop_var: role
       loop:
-        - timezone
-        - ssh
-        - firewall
-        - haveged
-        - docker
-        - cert
-        - dns
-        - headscale
+        # - timezone
+        # - ssh
+        # - firewall
+        # - haveged
+        # - docker
+        # - cert
+        # - dns
         - frontend
         - nextcloud
         - paperless
-        - dashboard
-        - healthchecks
-        - uptime
         - adguard
-        - digikam

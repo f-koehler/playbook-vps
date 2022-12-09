@@ -1,4 +1,0 @@
-- name: Restart dashboard.
-  community.docker.docker_compose:
-    project_src: "~/docker-compose/dashboard"
-    restarted: true
