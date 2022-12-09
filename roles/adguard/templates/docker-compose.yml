@@ -2,7 +2,7 @@ version: "3.9"
 services:
   app:
     container_name: adguard_app
-    image: "adguard/adguardhome:v0.107.9"
+    image: "adguard/adguardhome:v0.107.20"
     restart: "unless-stopped"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
