@@ -73,6 +73,18 @@ services:
       - "/etc/timezone:/etc/timezone:ro"
       - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
       - "app:/var/www/html"
+  proxy:
+    container_name: nextcloud_proxy
+    image: "nginx:1.23.3-alpine"
+    restart: "unless-stopped"
+    depends_on:
+      - app
+    ports:
+      - "{{ tailscale_ip }}:4431:443/tcp"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
 volumes:
   db:
   app:
