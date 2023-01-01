@@ -2,10 +2,10 @@ version: "3.9"
 services:
   cache:
     container_name: paperless_cache
-    image: redis:7-alpine
+    image: redis:7.0.7-alpine
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli --raw incr ping"]
+      test: [ "CMD-SHELL", "redis-cli --raw incr ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -17,10 +17,10 @@ services:
       - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
   db:
     container_name: paperless_db
-    image: postgres:15
+    image: postgres:14.6
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U paperless"]
+      test: [ "CMD-SHELL", "pg_isready -U paperless" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -44,7 +44,7 @@ services:
       - gotenberg
       - tika
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8000" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -69,14 +69,13 @@ services:
       PAPERLESS_DBPASS: "{{ paperless.db.password }}"
       PAPERLESS_ADMIN_USER: "{{ paperless.admin.user }}"
       PAPERLESS_ADMIN_PASSWORD: "{{ paperless.admin.password }}"
-      PAPERLESS_URL: "https://paperless.svc.fkoehler.xyz"
-    networks:
-      - frontend
-      - default
+      PAPERLESS_URL: "http://{{ tailscale_ip }}:8002"
+    ports:
+      - "{{ tailscale_ip }}:8002:8000/tcp"
 
   gotenberg:
     container_name: paperless_gotenberg
-    image: gotenberg/gotenberg:7
+    image: gotenberg/gotenberg:7.7.1
     restart: unless-stopped
     environment:
       CHROMIUM_DISABLE_ROUTES: 1
@@ -96,7 +95,7 @@ services:
 
   protonmail:
     container_name: paperless_protonmail
-    image: shenxn/protonmail-bridge:latest
+    image: shenxn/protonmail-bridge:2.4.8-1
     restart: unless-stopped
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
@@ -112,8 +111,3 @@ volumes:
   db:
   cache:
   protonmail:
-
-networks:
-  default:
-  frontend:
-    external: true
