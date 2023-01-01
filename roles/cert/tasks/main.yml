@@ -1,0 +1,16 @@
+- name: Generate private key.
+  community.crypto.openssl_privatekey:
+    path: /etc/ssl/private/vps.key
+
+- name: Generate CSR.
+  community.crypto.openssl_csr:
+    path: /etc/ssl/private/vps.csr
+    privatekey_path: /etc/ssl/private/vps.key
+    common_name: "{{ tailscale_ip }}"
+
+- name: Generate self-signed cert.
+  community.crypto.x509_certificate:
+    path: /etc/ssl/certs/vps.pem
+    privatekey_path: /etc/ssl/private/vps.key
+    csr_path: /etc/ssl/private/vps.csr
+    provider: selfsigned

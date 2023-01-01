@@ -18,6 +18,7 @@
       loop:
         - timezone
         - ssh
+        - cert
         - firewall
         - haveged
         - docker
