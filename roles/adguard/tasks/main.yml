@@ -33,20 +33,29 @@
     src: docker-compose.yml
     dest: ~/docker-compose/adguard/docker-compose.yml
     mode: "0600"
-  notify:
-    - Restart frontend.
 
 - name: Start containers.
   community.docker.docker_compose:
     project_src: "~/docker-compose/adguard"
     pull: true
-  notify:
-    - Restart frontend.
 
-- name: Generate nginx config.
-  ansible.builtin.template:
-    src: nginx.conf
-    dest: ~/docker-compose/frontend/sites/adguard.conf
-    mode: "0600"
-  notify:
-    - Restart frontend.
+- name: Allow DNS over tailscale.
+  community.general.ufw:
+    rule: allow
+    port: 53
+    proto: "{{ proto }}"
+    interface: tailscale0
+    direction: in
+  loop_control:
+    loop_var: proto
+  loop:
+    - tcp
+    - udp
+
+- name: Allow HTTP over tailscale.
+  community.general.ufw:
+    rule: allow
+    port: 8000
+    proto: "tcp"
+    interface: tailscale0
+    direction: in

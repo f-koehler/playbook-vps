@@ -1,81 +1,16 @@
-- name: Install certbot.
-  ansible.builtin.package:
-    name: "{{ package }}"
-  loop_control:
-    loop_var: package
-  loop:
-    - certbot
-    - certbot-dns-cloudflare
+- name: Generate private key.
+  community.crypto.openssl_privatekey:
+    path: /etc/ssl/private/vps.key
 
-- name: Create certbot config dir.
-  ansible.builtin.file:
-    path: /etc/certbot
-    state: directory
-    mode: "0600"
+- name: Generate CSR.
+  community.crypto.openssl_csr:
+    path: /etc/ssl/private/vps.csr
+    privatekey_path: /etc/ssl/private/vps.key
+    common_name: "{{ tailscale_ip }}"
 
-- name: Configure certbot cloudflare plugin.
-  ansible.builtin.template:
-    src: templates/cloudflare.ini
-    dest: /etc/certbot/cloudflare.ini
-    mode: "0600"
-
-- name: Run certbot.
-  ansible.builtin.command: >
-    certbot
-    certonly
-    --expand
-    --keep
-    --non-interactive
-    --agree-tos
-    -m
-    {{ letsencrypt_email }}
-    --dns-cloudflare
-    --dns-cloudflare-credentials
-    /etc/certbot/cloudflare.ini
-    -d {{ subdomains|join('.'+domain+',') }}.{{ domain }}
-  args:
-    creates: "/etc/letsencrypt/live/{{ subdomains[0] }}.{{ domain }}/privkey.pem"
-
-- name: Copy certbot systemd units.
-  ansible.builtin.copy:
-    src: "files/{{ unit }}"
-    dest: "/etc/systemd/system/{{ unit }}"
-    mode: "0600"
-  loop:
-    - certbot.service
-    - certbot.timer
-  loop_control:
-    loop_var: unit
-  notify:
-    - Restart certbot.
-
-- name: Enable cerbot.
-  ansible.builtin.systemd:
-    name: certbot.timer
-    state: started
-    enabled: true
-
-- name: Create Diffie-Hellman parameters.
-  ansible.builtin.command: >
-    openssl dhparam -out /etc/letsencrypt/live/{{ subdomains[0] }}.{{ domain }}/dhparams.pem 4096
-  args:
-    creates: "/etc/letsencrypt/live/{{ subdomains[0] }}.{{ domain }}/dhparams.pem"
-  notify:
-    - Restart headscale.
-    - Restart frontend.
-
-- name: Create bash alias for headscale.
-  ansible.builtin.lineinfile:
-    path: ~/.bashrc
-    line: 'alias headscale="docker exec -it headscale_app headscale"'
-
-- name: Install tailscale on server.
-  ansible.builtin.package:
-    name: tailscale
-    state: present
-
-- name: Start tailscale on server.
-  ansible.builtin.service:
-    name: tailscaled
-    state: started
-    enabled: true
+- name: Generate self-signed cert.
+  community.crypto.x509_certificate:
+    path: /etc/ssl/certs/vps.pem
+    privatekey_path: /etc/ssl/private/vps.key
+    csr_path: /etc/ssl/private/vps.csr
+    provider: selfsigned

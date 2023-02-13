@@ -10,20 +10,16 @@
     src: docker-compose.yml
     dest: ~/docker-compose/nextcloud/docker-compose.yml
     mode: "0600"
-  notify:
-    - Restart frontend.
 
 - name: Start containers.
   community.docker.docker_compose:
     project_src: "~/docker-compose/nextcloud"
     pull: true
-  notify:
-    - Restart frontend.
 
-- name: Generate nginx config.
-  ansible.builtin.template:
-    src: nginx.conf
-    dest: ~/docker-compose/frontend/sites/nextcloud.conf
-    mode: "0600"
-  notify:
-    - Restart frontend.
+- name: Allow HTTP over tailscale.
+  community.general.ufw:
+    rule: allow
+    port: 8001
+    proto: "tcp"
+    interface: tailscale0
+    direction: in
