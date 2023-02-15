@@ -69,7 +69,7 @@ services:
       PAPERLESS_DBPASS: "{{ paperless.db.password }}"
       PAPERLESS_ADMIN_USER: "{{ paperless.admin.user }}"
       PAPERLESS_ADMIN_PASSWORD: "{{ paperless.admin.password }}"
-      PAPERLESS_URL: "http://{{ tailscale_ip }}:8002"
+      PAPERLESS_URL: "https://paperless.vps.fkoehler.org"
     ports:
       - "8002:8000/tcp"
 

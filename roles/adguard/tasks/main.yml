@@ -51,3 +51,11 @@
   loop:
     - tcp
     - udp
+
+- name: Generate nginx config.
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: /etc/nginx/sites/adguard.conf
+    mode: "0600"
+  notify:
+    - Restart proxy.

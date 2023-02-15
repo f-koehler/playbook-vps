@@ -15,3 +15,11 @@
   community.docker.docker_compose:
     project_src: "~/docker-compose/paperless"
     pull: true
+
+- name: Generate nginx config.
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: /etc/nginx/sites/paperless.conf
+    mode: "0600"
+  notify:
+    - Restart proxy.
