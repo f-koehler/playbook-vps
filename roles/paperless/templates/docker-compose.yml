@@ -17,7 +17,7 @@ services:
       - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
   db:
     container_name: paperless_db
-    image: postgres:14.6
+    image: postgres:14.7
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U paperless" ]
