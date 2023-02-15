@@ -51,11 +51,3 @@
   loop:
     - tcp
     - udp
-
-- name: Allow HTTP over tailscale.
-  community.general.ufw:
-    rule: allow
-    port: 8000
-    proto: "tcp"
-    interface: tailscale0
-    direction: in

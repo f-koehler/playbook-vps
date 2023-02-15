@@ -71,7 +71,7 @@ services:
       PAPERLESS_ADMIN_PASSWORD: "{{ paperless.admin.password }}"
       PAPERLESS_URL: "http://{{ tailscale_ip }}:8002"
     ports:
-      - "{{ tailscale_ip }}:8002:8000/tcp"
+      - "8002:8000/tcp"
 
   gotenberg:
     container_name: paperless_gotenberg

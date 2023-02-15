@@ -13,7 +13,11 @@ services:
     ports:
       - "{{ tailscale_ip }}:53:53/tcp"
       - "{{ tailscale_ip }}:53:53/udp"
-      - "{{ tailscale_ip }}:8000:3000/tcp"
+      - "8000:3000/tcp"
+    extra_hosts:
+      - "nextcloud.vps.fkoehler.org:{{ tailscale_ip }}"
+      - "adguard.vps.fkoehler.org:{{ tailscale_ip }}"
+      - "paperless.vps.fkoehler.org:{{ tailscale_ip }}"
     healthcheck:
       test:
         [

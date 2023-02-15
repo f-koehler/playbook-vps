@@ -60,6 +60,5 @@
     openssl dhparam -out /etc/letsencrypt/live/vps.fkoehler.org/dhparams.pem 4096
   args:
     creates: "/etc/letsencrypt/live/vps.fkoehler.org/dhparams.pem"
-  # notify:
-  #   - Restart headscale.
-  #   - Restart frontend.
+  notify:
+    - Restart proxy.

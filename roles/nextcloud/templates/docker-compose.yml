@@ -53,13 +53,13 @@ services:
       POSTGRES_HOST: nextcloud_db
       NEXTCLOUD_ADMIN_USER: "{{ nextcloud.admin.user }}"
       NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud.admin.password }}"
-      NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud_app"
+      NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.vps.fkoehler.org"
       # OVERWRITEWEBROOT: "/nextcloud"
-      OVERWRITEHOST: "{{ tailscale_ip }}:8001"
-      OVERWRITEPROTOCOL: "http"
+      OVERWRITEHOST: "nextcloud.vps.fkoehler.org"
+      OVERWRITEPROTOCOL: "https"
       REDIS_HOST: nextcloud_cache
     ports:
-      - "{{ tailscale_ip }}:8001:80/tcp"
+      - "8001:80/tcp"
   cron:
     container_name: nextcloud_cron
     image: "nextcloud:25.0.2-apache"
