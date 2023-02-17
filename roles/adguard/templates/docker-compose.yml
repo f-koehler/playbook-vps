@@ -15,6 +15,7 @@ services:
       - "{{ tailscale_ip }}:53:53/udp"
       - "8000:3000/tcp"
     extra_hosts:
+      - "vps.fkoehler.org:{{ tailscale_ip }}"
       - "nextcloud.vps.fkoehler.org:{{ tailscale_ip }}"
       - "adguard.vps.fkoehler.org:{{ tailscale_ip }}"
       - "paperless.vps.fkoehler.org:{{ tailscale_ip }}"
