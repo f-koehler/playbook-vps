@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  app:
+    container_name: pihole_app
+    image: "pihole/pihole:2023.02.2"
+    restart: "unless-stopped"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+      - "app:/etc/pihole"
+      - "dnsmasq:/etc/dnsmasq.d"
+    environment:
+      TZ: "Europe/Berlin"
+      WEBPASSWORD: "{{ pihole_password }}"
+    ports:
+      - "{{ tailscale_ip }}:53:53/tcp"
+      - "{{ tailscale_ip }}:53:53/udp"
+      - "8000:80/tcp"
+    extra_hosts:
+      - "vps.fkoehler.org:{{ tailscale_ip }}"
+      - "nextcloud.vps.fkoehler.org:{{ tailscale_ip }}"
+      - "pihole.vps.fkoehler.org:{{ tailscale_ip }}"
+      - "paperless.vps.fkoehler.org:{{ tailscale_ip }}"
+    dns:
+      - "8.8.8.8"
+volumes:
+  app:
+  dnsmasq:
