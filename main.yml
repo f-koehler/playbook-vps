@@ -24,5 +24,5 @@
         - docker
         - nextcloud
         - paperless
-        - adguard
+        - pihole
         - proxy

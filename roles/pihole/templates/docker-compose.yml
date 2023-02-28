@@ -13,6 +13,7 @@ services:
     environment:
       TZ: "Europe/Berlin"
       WEBPASSWORD: "{{ pihole_password }}"
+      DNSMASQ_LISTENING: all
     ports:
       - "{{ tailscale_ip }}:53:53/tcp"
       - "{{ tailscale_ip }}:53:53/udp"
