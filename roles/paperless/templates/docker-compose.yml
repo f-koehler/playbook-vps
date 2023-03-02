@@ -95,7 +95,7 @@ services:
 
   protonmail:
     container_name: paperless_protonmail
-    image: shenxn/protonmail-bridge:3.0.17-1
+    image: shenxn/protonmail-bridge:3.0.19-1
     restart: unless-stopped
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
