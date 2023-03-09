@@ -26,3 +26,9 @@
         - paperless
         - pihole
         - proxy
+    - name: Prune docker.
+      community.general.docker_prune:
+        builder_cache: true
+        images: true
+        containers: true
+        networks: true
