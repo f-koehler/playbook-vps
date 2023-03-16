@@ -11,6 +11,14 @@
     dest: ~/docker-compose/paperless/docker-compose.yml
     mode: "0600"
 
+- name: Clone patched protonmail docker repo.
+  ansible.builtin.git:
+    repo: https://github.com/f-koehler/protonmail-bridge-docker
+    dest: ~/docker-compose/paperless/protonmail
+    version: fix/ubuntu-jammy
+    update: false
+    accept_hostkey: true
+
 - name: Start containers.
   community.docker.docker_compose:
     project_src: "~/docker-compose/paperless"
