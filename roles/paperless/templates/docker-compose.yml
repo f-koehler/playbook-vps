@@ -70,6 +70,7 @@ services:
       PAPERLESS_ADMIN_USER: "{{ paperless.admin.user }}"
       PAPERLESS_ADMIN_PASSWORD: "{{ paperless.admin.password }}"
       PAPERLESS_URL: "https://paperless.vps.fkoehler.org"
+      PAPERLESS_TASK_WORKERS: "4"
     ports:
       - "8002:8000/tcp"
 
