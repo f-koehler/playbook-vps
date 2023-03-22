@@ -2,7 +2,8 @@ version: "3.9"
 services:
   app:
     container_name: pihole_app
-    image: "pihole/pihole:2023.02.2"
+    # image: "pihole/pihole:2023.02.2"
+    build: ./pihole-unbound
     restart: "unless-stopped"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"

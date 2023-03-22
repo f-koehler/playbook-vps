@@ -23,6 +23,7 @@
   community.docker.docker_compose:
     project_src: "~/docker-compose/paperless"
     pull: true
+    build: true
 
 - name: Generate nginx config.
   ansible.builtin.template:

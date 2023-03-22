@@ -16,3 +16,7 @@
    ```bash
    docker start paperless_protonmail
    ```
+
+# Pi-hole Recursive DNS
+
+Set the upstream DNS server to `127.0.0.1#5335`.

@@ -28,6 +28,11 @@
     recurse: true
     mode: "0700"
 
+- name: Copy custom Dockerfile.
+  ansible.builtin.copy:
+    src: pihole-unbound
+    dest: "~/docker-compose/pihole/"
+
 - name: Generate docker-compose file.
   ansible.builtin.template:
     src: docker-compose.yml
@@ -38,6 +43,7 @@
   community.docker.docker_compose:
     project_src: "~/docker-compose/pihole"
     pull: true
+    build: true
 
 - name: Allow DNS over tailscale.
   community.general.ufw:
