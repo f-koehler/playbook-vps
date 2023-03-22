@@ -20,3 +20,17 @@
 # Pi-hole Recursive DNS
 
 Set the upstream DNS server to `127.0.0.1#5335`.
+
+# PSQL Operations
+
+Create a dump:
+
+```bash
+docker exec ${SERVICE}_db pg_dumpall -U ${SERVICE} > ~/${SERVICE}.sql
+```
+
+Restore a dump:
+
+```bash
+cat ~/${SERVICE} | docker exec -i ${SERVICE}_db psql -U ${SERVICE}
+```
