@@ -24,6 +24,7 @@ services:
       - "nextcloud.vps.fkoehler.org:{{ tailscale_ip }}"
       - "pihole.vps.fkoehler.org:{{ tailscale_ip }}"
       - "paperless.vps.fkoehler.org:{{ tailscale_ip }}"
+      - "photoprism.vps.fkoehler.org:{{ tailscale_ip }}"
     dns:
       - "8.8.8.8"
 volumes:

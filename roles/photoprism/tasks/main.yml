@@ -1,0 +1,34 @@
+- name: Get mountpoint of nextcloud_app volume.
+  ansible.builtin.shell: |
+    docker inspect {% raw %}--format='{{range .Mounts}}{{if eq .Destination "/var/www/html"}}{{.Source}}{{end}}{{end}}'{% endraw %} nextcloud_app
+  register: nextcloud_app_mountpoint_check
+
+- name: Store nextcloud_app mountpoint.
+  ansible.builtin.set_fact:
+    photoprism_originals_dir: "{{ nextcloud_app_mountpoint_check.stdout }}/data/fkoehler/files/Photos"
+
+- name: Create folder for docker-compose files.
+  ansible.builtin.file:
+    path: "~/docker-compose/photoprism"
+    state: directory
+    recurse: true
+    mode: "0700"
+
+- name: Generate docker-compose file.
+  ansible.builtin.template:
+    src: docker-compose.yml
+    dest: ~/docker-compose/photoprism/docker-compose.yml
+    mode: "0600"
+
+- name: Start containers.
+  community.docker.docker_compose:
+    project_src: "~/docker-compose/photoprism"
+    pull: true
+
+- name: Generate nginx config.
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: /etc/nginx/sites/photoprism.conf
+    mode: "0600"
+  notify:
+    - Restart proxy.
