@@ -13,9 +13,9 @@
 
 - name: Clone patched protonmail docker repo.
   ansible.builtin.git:
-    repo: https://github.com/f-koehler/protonmail-bridge-docker
+    repo: https://github.com/shenxn/protonmail-bridge-docker
     dest: ~/docker-compose/paperless/protonmail
-    version: fix/ubuntu-jammy
+    version: master
     update: false
     accept_hostkey: true
 
