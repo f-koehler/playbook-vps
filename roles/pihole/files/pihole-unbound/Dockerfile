@@ -1,4 +1,4 @@
-FROM "pihole/pihole:2023.02.2"
+FROM "pihole/pihole:2023.03.1"
 
 RUN apt update && apt upgrade -y && apt install -y unbound
 
