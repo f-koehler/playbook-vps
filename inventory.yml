@@ -1,0 +1,8 @@
+all:
+  children:
+    vpses:
+      hosts:
+        vps:
+          ansible_host: 100.74.108.18
+          ansible_port: 20257
+          ansible_user: fkoehler
