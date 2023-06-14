@@ -20,6 +20,14 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
       - "/usr/share/zoneinfo:/usr/share/zoneinfo:ro"
+  imaginary:
+    container_name: nextcloud_imaginary
+    image: "docker.io/nextcloud/aio-imaginary:latest"
+    environment:
+      PORT: "9000"
+    cap_add:
+      - SYS_NICE
+    command: "-enable-url-source -return-size"
   app:
     container_name: nextcloud_app
     image: "nextcloud:27.0.0-apache"
