@@ -25,7 +25,7 @@
         - nextcloud
         - paperless
         - pihole
-        - photoprism
+        # - photoprism
         - proxy
     - name: Prune docker.
       community.general.docker_prune:
