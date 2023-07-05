@@ -25,6 +25,7 @@
         - nextcloud
         - paperless
         - pihole
+        - obsidian
         # - photoprism
         - proxy
     - name: Prune docker.
