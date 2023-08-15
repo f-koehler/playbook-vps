@@ -36,7 +36,7 @@ services:
       POSTGRES_PASSWORD: "{{ paperless.db.password }}"
   app:
     container_name: paperless_app
-    image: ghcr.io/paperless-ngx/paperless-ngx:1.17.0
+    image: ghcr.io/paperless-ngx/paperless-ngx:1.17.1
     restart: unless-stopped
     depends_on:
       - db
