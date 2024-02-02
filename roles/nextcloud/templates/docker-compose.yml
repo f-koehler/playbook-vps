@@ -30,7 +30,7 @@ services:
     command: "-enable-url-source -return-size"
   app:
     container_name: nextcloud_app
-    image: "nextcloud:28.0.1-apache"
+    image: "nextcloud:28.0.2-apache"
     restart: "unless-stopped"
     depends_on:
       - db
@@ -54,7 +54,7 @@ services:
       - "8001:80/tcp"
   cron:
     container_name: nextcloud_cron
-    image: "nextcloud:28.0.1-apache"
+    image: "nextcloud:28.0.2-apache"
     restart: "unless-stopped"
     depends_on:
       - db
