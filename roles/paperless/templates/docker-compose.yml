@@ -76,7 +76,7 @@ services:
 
   gotenberg:
     container_name: paperless_gotenberg
-    image: gotenberg/gotenberg:8.2.1
+    image: gotenberg/gotenberg:8.2.2
     restart: unless-stopped
     environment:
       CHROMIUM_DISABLE_ROUTES: 1
