@@ -2,7 +2,7 @@ version: "3.9"
 services:
   db:
     container_name: nextcloud_db
-    image: "postgres:15.3"
+    image: "postgres:15.8"
     restart: "unless-stopped"
     environment:
       POSTGRES_PASSWORD: "{{ nextcloud.db.password }}"
